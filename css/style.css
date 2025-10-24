@@ -1,0 +1,1275 @@
+html{
+    scroll-behavior: smooth;
+}
+:root {
+    --header-height: 3.5rem;
+    
+    /*========== COLORES ==========*/
+    --black-color: hsl(220, 24%, 12%);
+    --black-color-light: hsl(220, 24%, 15%);
+    --black-color-lighten: hsl(220, 20%, 18%);
+    --color-nav: #ffffff;
+    /*========== FUENTES Y TIPOGRAFIA ==========*/
+    
+    --body-font: "Montserrat", sans-serif;
+    --normal-font-size: .938rem;
+    
+    /*========== TAMAÑOS DE FUENTES ==========*/
+    --font-regular: 400;
+    --font-semi-bold: 600;
+    
+    /*========== Z-INDEX ==========*/
+    --z-tooltip: 10;
+    --z-fixed: 100;
+    }
+    
+    
+    * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    }
+    
+    body {
+    font-family: var(--body-font);
+    font-size: var(--normal-font-size);
+    background-color: black;
+    padding-top: var(--header-height);
+    }
+    
+    /*=============== CLASES REUTILIZABLES ===============*/
+    .container {
+    max-width: 1120px;
+    margin-inline: 1.5rem;
+    }
+    ul {
+        list-style: none;
+    }
+        
+    a {
+        text-decoration: none;
+    }
+    
+    /*=============== HEADER ===============*/
+    .header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: black;
+        height: 80px; 
+        box-shadow: 0 2px 16px hsla(220, 6%, 59%, 0.3);
+        z-index: 1000;
+    }
+    
+    /*=============== NAV ===============*/
+    .nav {
+    height: var(--header-height);
+    }
+    
+    .nav__logo, 
+    .nav__burger, 
+    .nav__close {
+    color: #ffffff;
+    }
+    
+    .nav__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    
+    .nav__logo {
+    display: inline-flex;
+    align-items: center;
+    column-gap: .25rem;
+    font-weight: var(--font-semi-bold);
+    }
+    
+    .nav__logo i {
+    font-weight: initial;
+    font-size: 1.25rem;
+    }
+    
+    .nav_alterna {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    }
+    
+    .nav__burger, 
+    .nav__close {
+    position: absolute;
+    width: max-content;
+    height: max-content;
+    inset: 0;
+    margin: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: opacity .1s, transform .4s;
+    }
+    
+    .nav__close {
+    opacity: 0;
+    }
+
+    /* NAVEGACION PARA DISPOSITIVOS MOBILES */
+    
+    @media screen and (max-width: 1118px) {
+    .nav__menu {
+        position: absolute;
+        left: 0;
+        top: 2.5rem;
+        width: 100%;
+        height: calc(100vh - 3.5rem);
+        overflow: auto;
+        pointer-events: none;
+        opacity: 0;
+        transition: top .4s, opacity .3s;
+    }
+    .nav__menu::-webkit-scrollbar {
+        width: 0;
+    }
+    .nav__list {
+        margin-top: 23px;
+        background-color: #000000;
+        padding-top: 1rem;
+    }
+    }
+    
+    .nav__link {
+        color: #ffff;
+        font-weight: var(--font-semi-bold);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color .3s;
+    }
+    
+    .nav__link:hover {
+        color: #888888;
+    }
+    
+    /* MOSTRAR MENU ( PANTALLAS PEQUEÑAS ) */
+    .show-menu {
+        opacity: 1;
+        top: 3.5rem;
+        pointer-events: initial;
+    }
+    
+    /* ICONO HAMBURGUESA */
+    .show-icon .nav__burger {
+        opacity: 0;
+        transform: rotate(90deg);
+        }
+        .show-icon .nav__close {
+        opacity: 1;
+        transform: rotate(90deg);
+    }
+    
+    /*=============== MENU DESPLEGABLE ===============*/
+    
+    .menu_desplegable__item {
+    cursor: pointer;
+    }
+    
+    .menu_desplegable__arrow {
+    font-size: 1.25rem;
+    font-weight: initial;
+    transition: transform .4s;
+    }
+    
+    .menu_desplegable__link{
+    padding: 1.25rem 1.25rem 1.25rem 2.5rem;
+    color: #797979;
+    background-color: #111111;
+    display: flex;
+    align-items: center;
+    column-gap: .5rem;
+    font-weight: var(--font-semi-bold);
+    transition: background-color .3s;
+    border-radius: 15px 15px 15px 15px;
+    }
+    
+    .menu_desplegable__link i, 
+    .menu_desplegable__sublink i {
+    font-size: 1.25rem;
+    font-weight: initial;
+    }
+    
+    .menu_desplegable__link:hover{
+    background-color: #dedddd;
+    }
+    
+    .menu_desplegable__menu{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease-out;
+    border: 1px solid #434343;
+    border-radius: 15px;
+    background: #111111;
+    
+    }
+    
+    .menu_desplegable__menu.show-submenu {
+        max-height: 1000px; /* Permite que el contenido se despliegue */
+    }
+    
+    .menu_desplegable__arrow.rotate-arrow {
+        transform: rotate(180deg);
+        transition: transform 0.4s ease-in-out;
+    }
+
+    
+    
+    /*=============== MEDIA QUERIES ===============*/
+    
+    /* PARA PANTALLAS PEQUEÑAS */
+    @media screen and (max-width: 340px) {
+    .container {
+        margin-inline: 1rem;
+    }
+    
+    .nav__link {
+        padding-inline: 1rem;
+    }
+    }
+    
+    /* PARA PANTALLAS GRANDES ( PC )*/
+    @media screen and (min-width: 1118px) {
+    .container {
+        margin-inline: auto;
+    }
+
+    
+    /*MUESTRA EL MENU DESPLEGABLE DE HOME*/
+    .menu_desplegable__item:hover .menu_desplegable__menu{
+    max-height: 1000px;
+    transition: max-height .4s ease-in;
+    }
+    
+    /* ROTA LA FLECHA*/
+    
+    .menu_desplegable__item:hover .menu_desplegable__arrow {
+    transform: rotate(180deg);
+    }
+    
+    .nav {
+        height: calc(var(--header-height) + 2rem);
+        display: flex;
+        justify-content: space-between;
+    }
+    .nav_alterna {
+        display: none;
+    }
+    .nav__list {
+        height: 100%;
+        display: flex;
+        column-gap: 3rem;
+    }
+    .nav__link {
+        height: 100%;
+        padding: 0;
+        justify-content: initial;
+        column-gap: .25rem;
+    }
+    .nav__link:hover {
+        background-color: transparent;
+    }
+    
+    .menu_desplegable__item, 
+    .menu_desplegable__subitem {
+        position: relative;
+    }
+    
+    .menu_desplegable__menu{
+        max-height: initial;
+        overflow: initial;
+        position: absolute;
+        left: 0;
+        top: 6rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s, top .3s;
+    }
+    
+    .menu_desplegable__link, 
+    .menu_desplegable__sublink {
+        padding-inline: 1rem 3.5rem;
+    }
+    
+    .menu_desplegable__subitem .menu_desplegable__link {
+        padding-inline: 1rem;
+    }
+    
+    .menu_desplegable__submenu {
+        position: absolute;
+        left: 100%;
+        top: .5rem;
+    }
+    
+    /* MOSTRAR MENU DESPLEGABLE*/
+    .menu_desplegable__item:hover .menu_desplegable__menu {
+        opacity: 1;
+        top: 5.5rem;
+        pointer-events: initial;
+        transition: top .3s;
+    }
+
+            /* Submenú oculto por defecto */
+        .menu_desplegable__menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+    
+        /* Mostrar submenú */
+        .menu_desplegable__menu.show-submenu {
+            max-height: 1000px; /* Un valor alto para permitir que se despliegue */
+        }
+    
+        /* Rotar flecha cuando el submenú está activo */
+        .menu_desplegable__arrow.rotate-arrow {
+            transform: rotate(180deg);
+            transition: transform 0.4s ease-in-out;
+        }
+        
+    
+    }
+
+    
+/*======================= IMAGEN EMPRESA ==========================*/
+
+.hero{
+    height: var(--header-height);
+    background-image: url(/Tatto/img/HeroTatto.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    background-position: center;
+}
+
+.contenido-hero{
+    position: absolute;
+    background-color: rgba(0, 0, 0, .7);
+    background-color: rgba(0 0 0 / 70% );
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.hero-animacion{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    animation: myAnim 2s ease 0s 1 normal forwards;
+}
+
+.hero-animacion img{
+    margin-top: -200px;
+}
+
+@keyframes myAnim {
+	0% {
+		opacity: 0;
+		transform: translateY(250px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.contenido-hero h1{
+    color: #ffffff;
+    font-size: 1.5rem;
+    /*font-family: "Rye", serif;*/
+    margin-top: -180px;
+}    
+
+
+.contenido-hero .boton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffff;
+    height: 60px;
+    width: 150px;
+    border-radius: 10px;
+    background-color: #c0a372;
+    font-weight: bold;
+    font-size: 20px;
+    transition: .5s ease;
+    margin-top: -150px;
+}
+
+.contenido-hero .boton:hover{
+    background-color: #d1ba92;
+}
+
+@media (max-width: 665px) {
+    .contenido-hero{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0px 10px;
+    }
+    .contenido-hero img{
+        width: 300px;
+        height: 300px;
+    }
+
+    .contenido-hero h1{
+        width: 100%;
+        font-size: 1rem;
+        text-align: center;
+        margin-top: -80px;
+    }
+    .contenido-hero .boton{
+        margin-top: -80px;
+    }
+}
+
+/*======================= MAIN ==========================*/
+
+.container{
+    max-width: 1170px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.team{
+    padding: 100px 0;
+}
+
+.team-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(290px,1fr));
+    gap: 40px;
+}
+
+.team-item{
+    overflow: hidden;
+    position: relative;
+}
+
+.team-item::before,
+.team-item::after,
+.team-inner::before,
+.team-inner::after{
+    content: '';
+    position: absolute;
+    background-color: hsl(0, 0%, 100% , 0.5);
+    z-index: 1;
+    transition: .1s;
+}
+
+.team-item::before,
+.team-item::after{
+    height: 3px;
+    width: 0;
+    transition-delay: 0.1s;
+}
+
+.team-item::before{
+    top: 20px;
+    left: 20px;
+}
+
+.team-item::after{
+    bottom: 20px;
+    right: 20px;
+}
+
+.team-item:hover::before,
+.team-item:hover::after{
+    width: calc(100% - 40px);
+    transition-delay: 0s;
+}
+
+.team-inner::before,
+.team-inner::after{
+    height: 0;
+    width: 3px;
+}
+
+.team-inner::before{
+    right: 20px;
+    top: 20px;
+}
+
+.team-inner::after{
+    left: 20px;
+    bottom: 20px;
+}
+
+.team-item:hover .team-inner::before,
+.team-item:hover .team-inner::after{
+    height: calc(100% - 40px);
+    transition-delay: .1s;
+}
+
+.team-item img{
+    width: 100%;
+    display: block;
+    filter: grayscale(1);
+    transition: .5s;
+}
+
+.team-item:hover img{
+    opacity: .3;
+    transform: scale(1.1);
+}
+
+.team-info{
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(calc(-50% + 20px));
+    z-index: 2;
+    text-align: center;
+    text-transform: capitalize;
+    color: white;
+    opacity: 0;
+    transition: .5s;
+}
+
+.team-item:hover .team-info{
+    opacity: 1;
+    transform: translateY(-50%);
+    transition-delay: .1s;
+}
+
+.team-info .button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.team-info h3{
+    font-family: "Rye", serif;
+}
+
+.team-item:hover .team-info .button {
+    opacity: 1;
+    transition-delay: 0.1s;
+}
+
+.team-info h3{
+    font-size: 30px;
+    font-weight: 600;
+
+}
+
+
+@media (max-width: 768px) {
+    .team-item::before,
+    .team-item::after,
+    .team-inner::before,
+    .team-inner::after {
+        transition: none;
+    }
+
+    .team-item::before,
+    .team-item::after {
+        width: calc(100% - 40px);
+    }
+
+    .team-inner::before,
+    .team-inner::after {
+        height: calc(100% - 40px);
+    }
+
+    /* Texto y botón visibles */
+    .team-info {
+        opacity: 1;
+        transform: translateY(-50%);
+        transition: none;
+    }
+
+    .team-info .button {
+        opacity: 1;
+        transition: none;
+    }
+}
+
+/*==================== MAIN =================*/
+
+.bienvenida{
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #040404; /* Fondo de color sólido */
+        background-image: url(/Tatto/img/Brocha-oscura-bottom.png); /* Imagen de fondo */
+        background-size: contain; /* Ajustar la imagen al ancho disponible */
+        background-repeat: no-repeat; /* Evitar que la imagen se repita */
+        background-position: bottom; /* Colocar la imagen en la parte inferior */
+    position: relative; 
+}
+
+
+.bienvenida-txt{
+    width: 60%;
+    height: 100%;
+    margin-top: 200px;
+    margin-bottom: 200px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    position: relative; 
+    z-index: 1; 
+}
+
+.bienvenida-txt h2{
+    font-size: 3.6rem;
+    color: white;
+    font-family: "Rye", serif;
+}
+
+
+.bienvenida-txt h5{
+    margin-top: 30px;
+    font-size: 1.8rem;
+    color: #C0A372;
+    font-weight: lighter;
+}
+
+.bienvenida-txt p{
+    width: 80%;
+    margin-top: 20px;
+    font-size: 20px;
+    color: white;
+}
+
+.link {
+    position: relative; 
+    color: white;
+    border-bottom: 1px solid #C0A372;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-block;
+   padding: 0px 3px;
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0%;
+    background-color: transparent;
+    z-index: -1; 
+    transform-origin: bottom; 
+    transition: height 0.3s ease, background-color 0.3s ease; 
+}
+
+.link:hover {
+    color: black;
+}
+
+.link:hover::after {
+    background-color: #c0a372; 
+    height: 100%; 
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bienvenida {
+        grid-template-columns: 1fr; /* Cambia a una sola columna */
+    }
+
+    .bienvenida-txt {
+        width: 100%;
+        margin-top: 100px; 
+        margin-bottom: 100px; 
+        text-align: center; 
+    }
+
+    .bienvenida-txt h2 {
+        width: 100%;
+        font-size: 2rem; 
+        padding: 10px;
+    }
+
+    .bienvenida-txt h5 {
+        font-size: 1.5rem; 
+    }
+
+    .bienvenida-txt p {
+        width: 100%;
+        font-size: 20px; 
+        text-align: justify;
+        padding: 0px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bienvenida-txt h2 {
+        font-size: 2rem;
+    }
+
+    .bienvenida-txt h5 {
+        font-size: 1.3rem; 
+    }
+
+    .bienvenida-txt p {
+        font-size: 16px; 
+    }
+}
+
+/*======================= ESTILOS ==========================*/
+.estilos {
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.titulo {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(255, 255, 255);
+    background: 
+        url(/Tatto/img/Brocha--top.png) top no-repeat, /* Imagen superior */
+        url(/Tatto/img/Brocha-oscura-bottom.png) bottom no-repeat, /* Imagen inferior */
+        url(/Tatto/img/Fondo-Galeria2.jpg) center/cover no-repeat fixed; /* Fondo principal */
+    background-size: contain, contain, cover; /* Tamaños de las capas */
+}
+
+
+
+.titulo h1 {
+    color: #C0A372;
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+    font-family: "Rye", serif;
+}
+
+.container-styles {
+    width: 100%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    margin-top: 100px;
+    gap: 20px;
+}
+
+/* Estilo para los elementos */
+.style-item {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    border-radius: 10px; 
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Imágenes de fondo */
+.neo-tradicional {
+    background: url(/Tatto/img/Style4.jpg) no-repeat center center;
+    background-size: contain;
+    grid-column: 1 / 2;
+    grid-row: 1; 
+    border: 1px solid #2a2a2a;
+}
+
+.blackwork {
+    background: url(/Tatto/img/Style2.jpg) no-repeat center center;
+    background-size: cover;
+    grid-column: 2 / 4; 
+    grid-row: 1; 
+    border: 1px solid #2a2a2a;
+}
+
+.tradicional {
+    background: url(/Tatto/img/Style1.jpg) no-repeat center center;
+    background-size: cover;
+    grid-column: 1 / 3; 
+    grid-row: 2; 
+    border: 1px solid #2a2a2a;
+}
+
+.geometrico {
+    background: url(/Tatto/img/Style3.jpg) no-repeat center center;
+    background-size: cover;
+    grid-column: 3 / 4; 
+    grid-row: 2;
+    border: 1px solid #2a2a2a;
+}
+
+/* Overlay para el texto */
+
+
+.style-item:hover .overlay {
+    opacity: 1;
+    transform: translateY(0);
+    /*border: 2px solid rgba(255, 255, 255, 0.5); /* Borde gris translúcido */
+    padding: 20px ; 
+    box-sizing: border-box;
+}
+
+.style-item:hover{
+    transform: scale(.95);
+}
+
+
+.bounce-top{animation:bounce-top .9s linear both} @keyframes bounce-top{0%{transform:translateY(-45px);animation-timing-function:ease-in;opacity:1}24%{opacity:1}40%{transform:translateY(-24px);animation-timing-function:ease-in}65%{transform:translateY(-12px);animation-timing-function:ease-in}82%{transform:translateY(-6px);animation-timing-function:ease-in}93%{transform:translateY(-4px);animation-timing-function:ease-in}25%,55%,75%,87%{transform:translateY(0);animation-timing-function:ease-out}100%{transform:translateY(0);animation-timing-function:ease-out;opacity:1}}
+
+
+@keyframes bounce {
+    0% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(5px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.style-item:hover .overlay {
+    animation: bounce 0.2s ease-in-out;
+}
+
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.7); 
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 10px; 
+    opacity: 0;
+    transform: scale(0.8);
+    /*transition: all 0.3s ease-in-out;*/
+    font-family: "Rye", serif;
+}
+
+
+
+
+/* ==================== Media Queries ==================== */
+@media (max-width: 1024px) {
+    .container-styles {
+        grid-template-columns:1fr; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo h1 {
+        font-size: 40px; 
+    }
+
+    .titulo {
+        width: 100%;
+        height: 200px;
+    }
+
+    .container-styles{
+        margin-top: 100px;
+    }
+
+    .style-item {
+        height: 250px; 
+        width: 100%;
+    }
+
+    .neo-tradicional {
+        background: url(/Tatto/img/Style4.png) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 1; 
+        width: 90%;
+    }
+    
+    .blackwork {
+        background: url(/Tatto/img/Style2.png) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 2; 
+        width: 90%;
+    }
+    
+    .tradicional {
+        background: url(/Tatto/img/Style1.png) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 3; 
+        width: 90%;
+    }
+    
+    .geometrico {
+        background: url(/Tatto/img/Style3.png) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 4; 
+        width: 90%;
+    }
+    .overlay {
+        opacity: 1; 
+        transform: scale(1); 
+        background: rgba(0, 0, 0, 0.7); 
+    }
+
+}
+
+@media (max-width: 768px) {
+    .container-styles {
+        grid-template-columns: 1fr; 
+    }
+
+    .titulo h1 {
+        font-size: 30px; 
+    }
+    .neo-tradicional {
+        background: url(/Tatto/img/Style4.jpg) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 1; 
+    }
+    
+    .blackwork {
+        background: url(/Tatto/img/Style2.jpg) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 2; 
+    }
+    
+    .tradicional {
+        background: url(/Tatto/img/Style1.jpg) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 3; 
+    }
+    
+    .geometrico {
+        background: url(/Tatto/img/Style3.jpg) no-repeat center center;
+        background-size: cover;
+        grid-column: 1; 
+        grid-row: 4; 
+    }
+
+    .style-item {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 600px;
+        height: 300px; /* Ajusta según tus necesidades */
+    }
+
+}
+
+@media (max-width: 460px){
+    .style-item {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 300px;
+        height: 300px; 
+        border-radius: 10px; 
+        transition: transform 0.3s ease-in-out;
+    }
+
+}
+
+/* ==================== CITAS==================== */
+
+
+.citas{
+
+    height: var(--header-height);
+    background-image: url(/Tatto/img/MujerEspalda.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 856px;
+    width: 100%;
+    background-position: center;
+}
+
+.citas-hero{
+    position: absolute;
+    background-color: rgba(0, 0, 0, .7);
+    background-color: rgba(0 0 0 / 70% );
+    height: 856px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+
+
+.citas-hero h1{
+    color: #ffffff;
+    font-size: 3rem;
+    font-family: "Rye", serif;
+}    
+.citas-hero .boton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffff;
+    height: 60px;
+    width: 150px;
+    border-radius: 10px;
+    background-color: #c0a372;
+    font-weight: bold;
+    font-size: 20px;
+    transition: .5s ease;
+}
+
+.citas-hero .boton:hover{
+    background-color: #d1ba92;
+}
+
+@media (max-width: 668px){
+    .citas-hero h1{
+        text-align: center;
+        width: 95%;
+    }
+}
+
+/* ==================== Icono ==================== */
+
+.icono-fijo {
+    position: fixed; 
+    bottom: 20px;   
+    right: 20px;    
+    z-index: 1000;  
+}
+
+.icono-fijo a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: #25d366; 
+    color: white; 
+    text-decoration: none;
+    border-radius: 50%; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+    font-size: 24px; 
+    transition: .3s all;
+}
+
+/* Efecto hover */
+.icono-fijo a:hover {
+    background-color: #128c7e; 
+}
+
+/* ==================== FOOTER ==================== */
+
+.footer{
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 400px 500px 300px;
+    justify-content: center;
+    background-color: black;
+    gap: 30px;
+    padding: 50px;
+    border-top: 1px solid #434343;
+}
+
+.footer h1{
+    font-family: "Rye", serif;
+    color: white;
+    font-size: 25px;
+}
+.footer p{
+    color: white;
+}
+
+.descripcion p{
+    margin-top: 30px;
+}
+
+.datos {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    padding: 0px 30px;
+}
+
+.direccion .link {
+    position: relative;
+    color: white; /* Color inicial del texto */
+    border-bottom: 1px solid #C0A372;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-block;
+    padding: 0px 3px;
+    z-index: 1;
+}
+
+.direccion .link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background-color: #c0a372; /* Fondo en hover */
+    z-index: -1; /* Envía el fondo detrás del texto */
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.direccion .link:hover {
+    color: black; /* Mantén el texto blanco */
+}
+
+.direccion .link:hover::after {
+    height: 100%; /* Cubre todo el enlace con el fondo */
+}
+
+
+.descripcion{
+    width: 100%;
+    padding: 0px 30px;
+}
+
+.descripcion p{
+    text-align: justify;
+}
+.datos h1{
+   text-align: center;
+}
+
+.direccion{
+    margin-top: 30px;
+}
+
+.direccion a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    border-bottom: 1px solid #C0A372;
+    transition: .3s all ease;
+}
+
+
+.telefonos{
+    margin-top: 10px;
+}
+
+.Redes-sociales{
+    width: 100%;
+}
+
+.Redes-sociales .iconos{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+.Redes-sociales i{
+    color: white;
+    margin-top: 30px;
+    font-size: 40px;
+    transition: .3s ease;
+    align-items: end;
+}
+
+.Redes-sociales i:hover{
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+@media (max-width: 1024px){
+    .footer{
+        grid-template-columns: 1fr 1fr;
+    }
+    .Redes-sociales{
+        padding: 0 30px;
+    }
+    .Redes-sociales .iconos{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+   
+
+
+@media (max-width: 778px){
+    
+    .footer{
+        grid-template-columns: 1fr;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 20px;
+    }
+
+    .footer h1{
+        text-align: center;
+    }
+
+
+    .Redes-sociales{
+        width: 100%;
+        place-items: center;
+    }
+
+    .Redes-sociales .iconos{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
+
+
+
+
+

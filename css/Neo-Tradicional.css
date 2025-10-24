@@ -1,0 +1,754 @@
+html{
+    scroll-behavior: smooth;
+}
+:root {
+    --header-height: 3.5rem;
+    
+    /*========== COLORES ==========*/
+    --black-color: hsl(220, 24%, 12%);
+    --black-color-light: hsl(220, 24%, 15%);
+    --black-color-lighten: hsl(220, 20%, 18%);
+    --color-nav: #ffffff;
+    /*========== FUENTES Y TIPOGRAFIA ==========*/
+    
+    --body-font: "Montserrat", sans-serif;
+    --Fuente-Web: "Rye", serif;
+    --normal-font-size: .938rem;
+    
+    /*========== TAMAÑOS DE FUENTES ==========*/
+    --font-regular: 400;
+    --font-semi-bold: 600;
+    
+    /*========== Z-INDEX ==========*/
+    --z-tooltip: 10;
+    --z-fixed: 100;
+    }
+    
+    
+    * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    }
+    
+    body {
+    font-family: var(--body-font);
+    font-size: var(--normal-font-size);
+    background-color: black;
+    padding-top: var(--header-height);
+    }
+    
+    /*=============== CLASES REUTILIZABLES ===============*/
+    .container {
+    max-width: 1120px;
+    margin-inline: 1.5rem;
+    }
+    ul {
+        list-style: none;
+    }
+        
+    a {
+        text-decoration: none;
+    }
+    
+    /*=============== HEADER ===============*/
+    .header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: black;
+        height: 80px; 
+        box-shadow: 0 2px 16px hsla(220, 6%, 59%, 0.3);
+        z-index: 1000;
+    }
+    
+    /*=============== NAV ===============*/
+    .nav {
+    height: var(--header-height);
+    }
+    
+    .nav__logo, 
+    .nav__burger, 
+    .nav__close {
+    color: #ffffff;
+    }
+    
+    .nav__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    
+    .nav__logo {
+    display: inline-flex;
+    align-items: center;
+    column-gap: .25rem;
+    font-weight: var(--font-semi-bold);
+    }
+    
+    .nav__logo i {
+    font-weight: initial;
+    font-size: 1.25rem;
+    }
+    
+    .nav_alterna {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    }
+    
+    .nav__burger, 
+    .nav__close {
+    position: absolute;
+    width: max-content;
+    height: max-content;
+    inset: 0;
+    margin: auto;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: opacity .1s, transform .4s;
+    }
+    
+    .nav__close {
+    opacity: 0;
+    }
+
+    /* NAVEGACION PARA DISPOSITIVOS MOBILES */
+    
+    @media screen and (max-width: 1118px) {
+    .nav__menu {
+        position: absolute;
+        left: 0;
+        top: 2.5rem;
+        width: 100%;
+        height: calc(100vh - 3.5rem);
+        overflow: auto;
+        pointer-events: none;
+        opacity: 0;
+        transition: top .4s, opacity .3s;
+    }
+    .nav__menu::-webkit-scrollbar {
+        width: 0;
+    }
+    .nav__list {
+        margin-top: 23px;
+        background-color: #000000;
+        padding-top: 1rem;
+    }
+    }
+    
+    .nav__link {
+        color: #ffff;
+        font-weight: var(--font-semi-bold);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color .3s;
+    }
+    
+    .nav__link:hover {
+        color: #888888;
+    }
+    
+    /* MOSTRAR MENU ( PANTALLAS PEQUEÑAS ) */
+    .show-menu {
+        opacity: 1;
+        top: 3.5rem;
+        pointer-events: initial;
+    }
+    
+    /* ICONO HAMBURGUESA */
+    .show-icon .nav__burger {
+        opacity: 0;
+        transform: rotate(90deg);
+        }
+        .show-icon .nav__close {
+        opacity: 1;
+        transform: rotate(90deg);
+    }
+    
+    /*=============== MENU DESPLEGABLE ===============*/
+    
+    .menu_desplegable__item {
+    cursor: pointer;
+    }
+    
+    .menu_desplegable__arrow {
+    font-size: 1.25rem;
+    font-weight: initial;
+    transition: transform .4s;
+    }
+    
+    .menu_desplegable__link{
+    padding: 1.25rem 1.25rem 1.25rem 2.5rem;
+    color: #797979;
+    background-color: #111111;
+    display: flex;
+    align-items: center;
+    column-gap: .5rem;
+    font-weight: var(--font-semi-bold);
+    transition: background-color .3s;
+    border-radius: 15px 15px 15px 15px;
+    }
+    
+    .menu_desplegable__link i, 
+    .menu_desplegable__sublink i {
+    font-size: 1.25rem;
+    font-weight: initial;
+    }
+    
+    .menu_desplegable__link:hover{
+    background-color: #dedddd;
+    }
+    
+    .menu_desplegable__menu{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease-out;
+    border: 1px solid #434343;
+    border-radius: 15px;
+    background: #111111;
+    
+    }
+    
+    .menu_desplegable__menu.show-submenu {
+        max-height: 1000px; /* Permite que el contenido se despliegue */
+    }
+    
+    .menu_desplegable__arrow.rotate-arrow {
+        transform: rotate(180deg);
+        transition: transform 0.4s ease-in-out;
+    }
+
+    
+    
+    /*=============== MEDIA QUERIES ===============*/
+    
+    /* PARA PANTALLAS PEQUEÑAS */
+    @media screen and (max-width: 340px) {
+    .container {
+        margin-inline: 1rem;
+    }
+    
+    .nav__link {
+        padding-inline: 1rem;
+    }
+    }
+    
+    /* PARA PANTALLAS GRANDES ( PC )*/
+    @media screen and (min-width: 1118px) {
+    .container {
+        margin-inline: auto;
+    }
+
+    
+    /*MUESTRA EL MENU DESPLEGABLE DE HOME*/
+    .menu_desplegable__item:hover .menu_desplegable__menu{
+    max-height: 1000px;
+    transition: max-height .4s ease-in;
+    }
+    
+    /* ROTA LA FLECHA*/
+    
+    .menu_desplegable__item:hover .menu_desplegable__arrow {
+    transform: rotate(180deg);
+    }
+    
+    .nav {
+        height: calc(var(--header-height) + 2rem);
+        display: flex;
+        justify-content: space-between;
+    }
+    .nav_alterna {
+        display: none;
+    }
+    .nav__list {
+        height: 100%;
+        display: flex;
+        column-gap: 3rem;
+    }
+    .nav__link {
+        height: 100%;
+        padding: 0;
+        justify-content: initial;
+        column-gap: .25rem;
+    }
+    .nav__link:hover {
+        background-color: transparent;
+    }
+    
+    .menu_desplegable__item, 
+    .menu_desplegable__subitem {
+        position: relative;
+    }
+    
+    .menu_desplegable__menu{
+        max-height: initial;
+        overflow: initial;
+        position: absolute;
+        left: 0;
+        top: 6rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s, top .3s;
+    }
+    
+    .menu_desplegable__link, 
+    .menu_desplegable__sublink {
+        padding-inline: 1rem 3.5rem;
+    }
+    
+    .menu_desplegable__subitem .menu_desplegable__link {
+        padding-inline: 1rem;
+    }
+    
+    .menu_desplegable__submenu {
+        position: absolute;
+        left: 100%;
+        top: .5rem;
+    }
+    
+    /* MOSTRAR MENU DESPLEGABLE*/
+    .menu_desplegable__item:hover .menu_desplegable__menu {
+        opacity: 1;
+        top: 5.5rem;
+        pointer-events: initial;
+        transition: top .3s;
+    }
+
+            /* Submenú oculto por defecto */
+        .menu_desplegable__menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+    
+        /* Mostrar submenú */
+        .menu_desplegable__menu.show-submenu {
+            max-height: 1000px; /* Un valor alto para permitir que se despliegue */
+        }
+    
+        /* Rotar flecha cuando el submenú está activo */
+        .menu_desplegable__arrow.rotate-arrow {
+            transform: rotate(180deg);
+            transition: transform 0.4s ease-in-out;
+        }
+        
+    
+    }
+
+    .cabecera {
+        width: 100%;
+        height: 450px;
+        background: 
+            linear-gradient(0deg, rgb(17, 17, 17) 0%, rgba(255, 255, 255, 0) 100%), 
+            url(/Tatto/img/Estilos-hero.jpg);
+        margin-top: -160px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+
+    .cabecera h1{
+        color: white;
+        font-family: var(--Fuente-Web);
+        font-size: 4rem;
+        text-align: center;
+    }
+
+    .descripcion-contenido {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: rgb(255, 255, 255);
+        background-color: #111111; /* Fondo de color sólido */
+        background-image: url(/Tatto/img/Brocha-oscura-bottom.png); /* Imagen de fondo */
+        background-size: contain; /* Ajustar la imagen al ancho disponible */
+        background-repeat: no-repeat; /* Evitar que la imagen se repita */
+        background-position: bottom; /* Colocar la imagen en la parte inferior */
+    }
+    
+    .descripcion-contenido h1, p{
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .descripcion-contenido h1{
+        margin-top: 50px;
+        font-family: var(--Fuente-Web);
+        font-size: 30px;
+    }
+
+    .descripcion-contenido p{
+        width: 60%;
+        margin: 40px;
+        margin-bottom: 150px;
+        color: #888888;
+    }
+
+
+    .contenido{
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 100px;
+    }
+
+    .cabecera-galeria{
+        width: 100%;
+        height: auto;
+        margin: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cabecera-galeria h1{
+        color: white;
+        font-size: 40px;
+        text-align: center;
+        font-family: var(--Fuente-Web);
+    }
+
+
+    .galeria-container{
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: url(/Tatto/img/Fondo-Galeria.jpg);
+        animation: mover-fondo 10s linear infinite; /* Animación infinita */
+    }
+
+    @keyframes mover-fondo {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 100% 0;
+        }
+    }
+    
+    
+    .galeria-imagenes{
+        width: auto;
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(3 , 1fr);
+        gap: 20px;
+        margin-top: 50px;
+        margin: 100px;
+        flex-direction: column;
+    }
+
+    .galeria-imagenes img{
+        view-timeline-name: --reveal;
+        animation-name: show;
+        animation-fill-mode: both;
+        animation-timeline: --reveal;
+        animation-range: entry 25% cover 50%;
+        width: 350px;
+        height: 350px;
+        opacity: 0.1;
+        object-fit: cover;
+    }
+
+
+    .boton{
+       margin: 50px 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffff;
+        height: 60px;
+        width: 400px;
+        border-radius: 10px;
+        background-color: #c0a372;
+        font-weight: bold;
+        font-size: 20px;
+        text-align: center;
+        font-family: "Rye", serif;
+        transition: .5s ease;
+    }
+
+     .boton:hover{
+        background-color: #d1ba92;
+        cursor: pointer;
+    }
+
+    @media (max-width: 1024px){
+        .galeria-imagenes{
+            width: 100%;
+            height: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            place-items: center;
+        }
+    }
+
+    @media (max-width: 665px){
+        .cabecera h1{
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            font-family: var(--Fuente-Web);
+        }
+    }
+       
+    
+       
+    
+    @media (max-width: 448px){
+        .galeria-imagenes{
+            grid-template-columns: 1fr !important;
+            margin-top: 100px;
+        }
+
+        .galeria-imagenes img{
+            width: 300px;
+            height: 300px;
+        }
+            .boton{
+                width: 200px;
+                font-size: 20px;
+        }
+
+        .descripcion-contenido h1, p{
+            font-size: 16px;
+            text-align: center;
+        }
+    
+        .descripcion-contenido h1{
+            margin-top: 50px;
+            width: 90%;
+        }
+    
+        .descripcion-contenido p{
+            width: 90%;
+            margin: 40px;
+            color: #888888;
+            font-size: 16px;
+        }
+        }
+
+
+
+    /*========== ANIMACIONES PARA SCROLL IMAGENES*/
+
+    @keyframes show {
+        from {
+            opacity: 0; scale: 10%;
+        }
+        to{
+            opacity: 1; scale: 100%;
+        }
+    }
+
+
+    
+/* ==================== Icono ==================== */
+
+.icono-fijo {
+    position: fixed; 
+    bottom: 20px;   
+    right: 20px;    
+    z-index: 1000;  
+}
+
+.icono-fijo a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: #25d366; 
+    color: white; 
+    text-decoration: none;
+    border-radius: 50%; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+    font-size: 24px; 
+    transition: .3s all;
+}
+
+/* Efecto hover */
+.icono-fijo a:hover {
+    background-color: #128c7e; 
+}
+
+
+/* ==================== FOOTER ==================== */
+
+.footer{
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 400px 500px 300px;
+    justify-content: center;
+    background-color: black;
+    gap: 30px;
+    padding: 50px;
+    border-top: 1px solid #434343;
+}
+
+.footer h1{
+    font-family: "Rye", serif;
+    color: white;
+    font-size: 25px;
+}
+.footer p{
+    color: white;
+}
+
+.descripcion p{
+    margin-top: 30px;
+}
+
+.datos {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    padding: 0px 30px;
+}
+
+.direccion .link {
+    position: relative;
+    color: white; /* Color inicial del texto */
+    border-bottom: 1px solid #C0A372;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-block;
+    padding: 0px 3px;
+    z-index: 1;
+}
+
+.direccion .link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background-color: #c0a372; /* Fondo en hover */
+    z-index: -1; /* Envía el fondo detrás del texto */
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.direccion .link:hover {
+    color: black; /* Mantén el texto blanco */
+}
+
+.direccion .link:hover::after {
+    height: 100%; /* Cubre todo el enlace con el fondo */
+}
+
+
+.descripcion{
+    width: 100%;
+    padding: 0px 30px;
+}
+
+.descripcion p{
+    text-align: justify;
+}
+.datos h1{
+   text-align: center;
+}
+
+.direccion{
+    margin-top: 30px;
+}
+
+.direccion a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    border-bottom: 1px solid #C0A372;
+    transition: .3s all ease;
+}
+
+
+.telefonos{
+    margin-top: 10px;
+}
+
+.Redes-sociales{
+    width: 100%;
+}
+
+.Redes-sociales .iconos{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+.Redes-sociales i{
+    color: white;
+    margin-top: 30px;
+    font-size: 40px;
+    transition: .3s ease;
+    align-items: end;
+}
+
+.Redes-sociales i:hover{
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+@media (max-width: 1024px){
+    .footer{
+        grid-template-columns: 1fr 1fr;
+    }
+    .Redes-sociales{
+        padding: 0 30px;
+    }
+    .Redes-sociales .iconos{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+   
+
+
+@media (max-width: 778px){
+    
+    .footer{
+        grid-template-columns: 1fr;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 20px;
+    }
+
+    .footer h1{
+        text-align: center;
+    }
+
+
+    .Redes-sociales{
+        width: 100%;
+        place-items: center;
+    }
+
+    .Redes-sociales .iconos{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
