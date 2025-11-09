@@ -342,7 +342,7 @@ html{
 
 .hero{
     height: var(--header-height);
-    background-image: url(/Tatto/img/HeroTatto.jpg);
+    background-image: url(/img/HeroTatto.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
@@ -621,8 +621,8 @@ html{
     align-items: center;
     flex-direction: column;
     background-color: #040404; /* Fondo de color sólido */
-        background-image: url(/Tatto/img/Brocha-oscura-bottom.png); /* Imagen de fondo */
-        background-size: contain; /* Ajustar la imagen al ancho disponible */
+        background-image: url(/img/Brocha-oscura-bottom.png); /* Imagen de fondo */
+        background-size: contain; /* Ajustar la imagen al ancho disponible */   
         background-repeat: no-repeat; /* Evitar que la imagen se repita */
         background-position: bottom; /* Colocar la imagen en la parte inferior */
     position: relative; 
@@ -756,9 +756,9 @@ html{
     flex-direction: column;
     color: rgb(255, 255, 255);
     background: 
-        url(/Tatto/img/Brocha--top.png) top no-repeat, /* Imagen superior */
-        url(/Tatto/img/Brocha-oscura-bottom.png) bottom no-repeat, /* Imagen inferior */
-        url(/Tatto/img/Fondo-Galeria2.jpg) center/cover no-repeat fixed; /* Fondo principal */
+        url(/img/Brocha-oscura-top.png) top no-repeat, /* Imagen superior */
+        url(/img/Brocha-oscura-bottom.png) bottom no-repeat, /* Imagen inferior */
+        url(/img/Fondo-Galeria2.jpg) center/cover no-repeat fixed; /* Fondo principal */
     background-size: contain, contain, cover; /* Tamaños de las capas */
 }
 
@@ -795,7 +795,7 @@ html{
 
 /* Imágenes de fondo */
 .neo-tradicional {
-    background: url(/Tatto/img/Style4.jpg) no-repeat center center;
+    background: url(/img/Style4.jpg) no-repeat center center;
     background-size: contain;
     grid-column: 1 / 2;
     grid-row: 1; 
@@ -803,7 +803,7 @@ html{
 }
 
 .blackwork {
-    background: url(/Tatto/img/Style2.jpg) no-repeat center center;
+    background: url(/img/Style2.jpg) no-repeat center center;
     background-size: cover;
     grid-column: 2 / 4; 
     grid-row: 1; 
@@ -811,7 +811,7 @@ html{
 }
 
 .tradicional {
-    background: url(/Tatto/img/Style1.jpg) no-repeat center center;
+    background: url(/img/Style1.jpg) no-repeat center center;
     background-size: cover;
     grid-column: 1 / 3; 
     grid-row: 2; 
@@ -819,7 +819,7 @@ html{
 }
 
 .geometrico {
-    background: url(/Tatto/img/Style3.jpg) no-repeat center center;
+    background: url(/img/Style3.jpg) no-repeat center center;
     background-size: cover;
     grid-column: 3 / 4; 
     grid-row: 2;
@@ -915,7 +915,7 @@ html{
     }
 
     .neo-tradicional {
-        background: url(/Tatto/img/Style4.png) no-repeat center center;
+        background: url(/img/Style4.png) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 1; 
@@ -923,7 +923,7 @@ html{
     }
     
     .blackwork {
-        background: url(/Tatto/img/Style2.png) no-repeat center center;
+        background: url(/img/Style2.png) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 2; 
@@ -931,7 +931,7 @@ html{
     }
     
     .tradicional {
-        background: url(/Tatto/img/Style1.png) no-repeat center center;
+        background: url(/img/Style1.png) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 3; 
@@ -939,7 +939,7 @@ html{
     }
     
     .geometrico {
-        background: url(/Tatto/img/Style3.png) no-repeat center center;
+        background: url(/img/Style3.png) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 4; 
@@ -962,28 +962,28 @@ html{
         font-size: 30px; 
     }
     .neo-tradicional {
-        background: url(/Tatto/img/Style4.jpg) no-repeat center center;
+        background: url(/img/Style1.jpg) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 1; 
     }
     
     .blackwork {
-        background: url(/Tatto/img/Style2.jpg) no-repeat center center;
+        background: url(/img/Style2.jpg) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 2; 
     }
     
     .tradicional {
-        background: url(/Tatto/img/Style1.jpg) no-repeat center center;
+        background: url(/img/Style1.jpg) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 3; 
     }
     
     .geometrico {
-        background: url(/Tatto/img/Style3.jpg) no-repeat center center;
+        background: url(/img/Style3.jpg) no-repeat center center;
         background-size: cover;
         grid-column: 1; 
         grid-row: 4; 
@@ -1022,7 +1022,7 @@ html{
 .citas{
 
     height: var(--header-height);
-    background-image: url(/Tatto/img/MujerEspalda.jpg);
+    background-image: url(/img/MujerEspalda.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     height: 856px;
