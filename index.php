@@ -1,3 +1,6 @@
+<?php
+    session_start(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,8 +79,25 @@
 
                 <li><a href="cuidados.html" class="nav__link">Cuidados</a></li>
                 <li><a href="nosotros.html" class="nav__link">Conocenos</a></li>
-                <li><a href="agenda.html" class="nav__link">Ver Agenda</a></li>
-                <li><a href="login.html" class="nav__link">Login</a></li>
+                <?php
+        // Si el usuario SÍ está logueado...
+        if (isset($_SESSION['logueado']) && $_SESSION['logueado'] === true):
+    ?>
+
+        <li><a href="agenda.php" class="nav__link">Ver Agenda</a></li>
+        <li><a href="php/logout.php" class="nav__link">Cerrar Sesión</a></li>
+
+    <?php
+        // Si NO está logueado...
+        else:
+    ?>
+
+        <li><a href="login.html" class="nav__link">Admin Login</a></li>
+
+    <?php
+        // Fin del IF
+        endif; 
+    ?>
             </ul>
             </div>
         </nav>

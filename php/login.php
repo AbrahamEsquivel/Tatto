@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password_ingresada = $_POST['password'];
 
     // 2. Consulta para buscar al artista por su email
-    // Unimos PERSONA y ARTISTA para obtener los datos
     $sql = "SELECT 
                 a.id AS artista_id, 
                 a.nombre_artistico, 
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['nombre_artista'] = $fila['nombre_artistico'];
 
             // 5. Redirigir a la Zona VIP (agenda.php)
-            // (Usamos ../ porque estamos en /php/ y queremos subir a /Tatto/ y luego entrar a agenda.php)
             header('Location: ../agenda.php');
             exit;
 
