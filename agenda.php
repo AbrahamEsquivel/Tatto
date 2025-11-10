@@ -37,7 +37,10 @@
 
     <header class="admin-header">
         <h1>Agenda de <?php echo $nombre_artista; ?></h1>
-        <a href="php/logout.php">Cerrar Sesión</a>
+        <div>
+            <a href="formulario-cita.php" class="btn-nueva-cita">Crear Nueva Cita</a>
+                <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
+        </div>
     </header>
 
     <main>
