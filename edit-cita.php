@@ -15,26 +15,8 @@
     }
     $id_cita_a_editar = $_GET['id'];
 
-    // 3. BUSCAR LOS DATOS DE ESA CITA EN LA BD
-    $sql = "SELECT
-            c.id AS id_cita,
-            c.fecha_hora,
-            p_cliente.nombre AS cliente_nombre,
-            p_cliente.apellido AS cliente_apellido,
-            p_cliente.email AS cliente_email,
-            t.descripcion AS tatuaje_descripcion,
-            t.precio_total,
-            c.id_estado_cita,
-            c.id_artista,
-            c.id_tatuaje
-        FROM CITA AS c
-        JOIN CLIENTE AS cl ON c.id_cliente = cl.id
-        JOIN PERSONA AS p_cliente ON cl.id_persona = p_cliente.id
-        JOIN ARTISTA AS a ON c.id_artista = a.id
-        JOIN TATUAJE AS t ON c.id_tatuaje = t.id
-        JOIN ESTADO_CITA AS ec ON c.id_estado_cita = ec.id
-        WHERE c.id = ?
-        LIMIT 1";
+    // 3. BUSCAR LOS DATOS USANDO LA VISTA (¡MÁS LIMPIO!)
+    $sql = "SELECT * FROM v_AgendaCompleta WHERE id_cita = ? LIMIT 1";
 
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id_cita_a_editar);
@@ -81,9 +63,12 @@
 <body>
 
     <header class="admin-header">
-        <h1>Editando Cita #<?php echo htmlspecialchars($cita['id_cita']); ?></h1>
-        <a href="agenda.php">Volver sin Guardar</a>
-    </header>
+    <h1>Editando Cita #<?php echo htmlspecialchars($cita['id_cita']); ?></h1>
+    <div>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="agenda.php" style="margin-left: 10px;">Volver a la Agenda</a>
+    </div>
+</header>
 
     <div class="form-container">
         <form id="form-editar-cita" action="php/updateCita.php" method="POST">
