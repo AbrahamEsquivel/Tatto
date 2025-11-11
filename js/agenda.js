@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Esta función ya la tenías
-    cargarCitas();
+    cargarCitas();
 
     // ⬇️ NUEVO (PARTE 1) ⬇️
     // Lógica para "escuchar" clics en los botones de cancelar
@@ -8,19 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('agenda-container');
     if (container) {
         container.addEventListener('click', (event) => {
-            
+
             // Verificamos si el clic fue en un botón de cancelar
             if (event.target.classList.contains('btn-cancelar')) {
                 event.preventDefault(); // Evita que el enlace <a> navegue
-                
+
                 // Obtenemos el ID que guardamos en 'data-id'
                 const idCita = event.target.dataset.id;
-                
+
                 // Si el botón está deshabilitado, no hacemos nada
                 if (event.target.classList.contains('btn-disabled')) {
                     return;
                 }
-                
+
                 // Pedimos confirmación al admin
                 if (confirm(`¿Estás seguro de que quieres CANCELAR la cita ID: ${idCita}? \n\nEsta acción cambiará el estado a 'Cancelada'.`)) {
                     cancelarCita(idCita);
@@ -32,35 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function cargarCitas() {
-    // Esta función no cambia en nada
-    fetch('php/getCitas.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('La respuesta de la red no fue exitosa');
-            }
-            return response.json();
-        })
-        .then(citas => {
-            console.log(citas); 
-            mostrarCitasEnHTML(citas);
-        })
-        .catch(error => {
-            console.error('Error al cargar las citas:', error);
-            const container = document.getElementById('agenda-container');
-            container.innerHTML = "<p>Error al cargar la agenda. Intenta más tarde.</p>";
-        });
+    // Esta función no cambia en nada
+    fetch('php/getCitas.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La respuesta de la red no fue exitosa');
+            }
+            return response.json();
+        })
+        .then(citas => {
+            console.log(citas);
+            mostrarCitasEnHTML(citas);
+        })
+        .catch(error => {
+            console.error('Error al cargar las citas:', error);
+            const container = document.getElementById('agenda-container');
+            container.innerHTML = "<p>Error al cargar la agenda. Intenta más tarde.</p>";
+        });
 }
 
 function mostrarCitasEnHTML(citas) {
-    const container = document.getElementById('agenda-container');
-    container.innerHTML = ''; 
+    const container = document.getElementById('agenda-container');
+    container.innerHTML = '';
 
-    if (citas.length === 0) {
-        container.innerHTML = "<p>No hay citas programadas.</p>";
-        return;
-    }
+    if (citas.length === 0) {
+        container.innerHTML = "<p>No hay citas programadas.</p>";
+        return;
+    }
 
-    citas.forEach(cita => {
+    citas.forEach(cita => {
         // ⬇️ NUEVO (PARTE 2) ⬇️
         // Verificamos si la cita ya está cancelada
         const isCancelada = cita.estado_cita === 'Cancelada';
@@ -69,7 +69,7 @@ function mostrarCitasEnHTML(citas) {
         const cardClass = isCancelada ? 'cita-card card-cancelada' : 'cita-card';
         // ⬆️ FIN DE NUEVO (PARTE 2) ⬆️
 
-        const citaHTML = `
+        const citaHTML = `
                         <div class="${cardClass}">
                 <h3>Cita ID: ${cita.id_cita}</h3>
                 <p><strong>Fecha:</strong> ${cita.fecha_hora}</p>
@@ -92,8 +92,8 @@ function mostrarCitasEnHTML(citas) {
                 </div>
                             </div>
         `;
-        container.innerHTML += citaHTML;
-    });
+        container.innerHTML += citaHTML;
+    });
 }
 
 
@@ -111,20 +111,20 @@ function cancelarCita(idCita) {
         },
         body: `id_cita=${idCita}` // Enviamos el ID en el cuerpo
     })
-    .then(response => response.json()) // Esperamos una respuesta JSON
-    .then(data => {
-        if (data.success) {
-            // Si el PHP nos dice que fue un éxito
-            alert('¡Cita cancelada correctamente!');
-            cargarCitas(); // Volvemos a dibujar la agenda para ver el cambio
-        } else {
-            // Si el PHP nos da un error
-            alert('Error al cancelar la cita: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error en fetch:', error);
-        alert('Error de conexión. No se pudo cancelar la cita.');
-    });
+        .then(response => response.json()) // Esperamos una respuesta JSON
+        .then(data => {
+            if (data.success) {
+                // Si el PHP nos dice que fue un éxito
+                alert('¡Cita cancelada correctamente!');
+                cargarCitas(); // Volvemos a dibujar la agenda para ver el cambio
+            } else {
+                // Si el PHP nos da un error
+                alert('Error al cancelar la cita: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en fetch:', error);
+            alert('Error de conexión. No se pudo cancelar la cita.');
+        });
 }
 // ⬆️ FIN DE NUEVO (PARTE 4) ⬆️

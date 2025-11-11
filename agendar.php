@@ -49,6 +49,28 @@
             font-size: 16px; 
         }
         .form-container .btn:hover { background: #0056b3; }
+
+.validator-message {
+    font-size: 0.9em;
+    font-weight: bold;
+    padding-top: 8px;
+}
+.validator-message.success {
+    color: #28a745; /* Verde */
+}
+.validator-message.error {
+    color: #dc3545; /* Rojo */
+}
+.validator-message.loading {
+    color: #6c757d; /* Gris */
+}
+
+/* Para el botón deshabilitado */
+#btn-submit-cita:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
     </style>
 </head>
 <body>
@@ -173,6 +195,7 @@
                 <div class="form-group">
                     <label for="fecha_hora_preferida">Fecha y Hora Preferida:</label>
                     <input type="datetime-local" id="fecha_hora_preferida" name="fecha_hora" required>
+                    <div id="time-validator-message" class="validator-message"></div>
                 </div>
                 <div class="form-group">
                   <label for="tatuaje_descripcion">Descripción de tu Tatuaje:</label>
@@ -200,7 +223,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn">Enviar Solicitud de Cita</button>
+                <button type="submit" id="btn-submit-cita" class="btn">Enviar Solicitud de Cita</button>
             </form>
         </div>
     </main>
@@ -258,9 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <script src="js/main.js"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-        AOS.init();
-    </script>
+    <script> AOS.init(); </script>
+
+    <script src="js/agendar.js"></script>
 
 </body>
 </html>

@@ -109,11 +109,12 @@
     </style>
 </head>
 <body>
-
-    <header class="admin-header">
+<header class="admin-header">
     <h1>Dashboard (¡Hola, <?php echo $nombre_artista; ?>!)</h1>
     <div>
         <a href="directorio.php" style="background-color: #ffc107; color: #333;">Directorio General</a>
+        
+        <a href="historial-pagos.php" style="background-color: #6f42c1; color: white;">Historial de Pagos</a>
         
         <a href="agenda.php">Ver Agenda Completa</a>
         <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
