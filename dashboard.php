@@ -79,17 +79,46 @@
             text-align: left;
         }
         .report-section th { background-color: #f8f9fa; }
+
+        .task-section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.btn-admin-task {
+    background-color: #ffc107; /* Amarillo */
+    color: #212529; /* Texto oscuro */
+    font-weight: bold;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+.btn-admin-task:hover {
+    background-color: #e0a800;
+}
+.btn-admin-task:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
     </style>
 </head>
 <body>
 
     <header class="admin-header">
-        <h1>Dashboard (¡Hola, <?php echo $nombre_artista; ?>!)</h1>
-        <div>
-            <a href="agenda.php">Ver Agenda Completa</a>
-            <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
-        </div>
-    </header>
+    <h1>Dashboard (¡Hola, <?php echo $nombre_artista; ?>!)</h1>
+    <div>
+        <a href="directorio.php" style="background-color: #ffc107; color: #333;">Directorio General</a>
+        
+        <a href="agenda.php">Ver Agenda Completa</a>
+        <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</header>
 
     <main class="dashboard-container">
         
@@ -129,8 +158,36 @@
                 </tbody>
             </table>
         </section>
+     </table>
+        </section>
 
+        <section class="task-section">
+            <h2>Herramientas Administrativas</h2>
+            <p>Ejecuta tareas de mantenimiento en la base de datos.</p>
+            <button id="btn-enviar-recordatorios" class="btn-admin-task">
+                Ejecutar: Enviar Recordatorios a Citas Pendientes
+            </button>
+            <span id="task-status" style="margin-left: 15px; font-weight: bold; display: none;"></span>
+        </section>
+
+        <section class="report-section">
+            <h2>Bitácora de Notificaciones Recientes</h2>
+            <p>Muestra los últimos 10 eventos de la tabla <code>log_notificaciones</code>.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha de Envío</th>
+                        <th>ID Cita</th>
+                        <th>Mensaje</th>
+                    </tr>
+                </thead>
+                <tbody id="bitacora-tabla-body">
+                    <tr><td colspan="3">Cargando bitácora...</td></tr>
+                </tbody>
+            </table>
+        </section>
     </main>
+
     
     <script src="js/dashboard.js"></script>
 

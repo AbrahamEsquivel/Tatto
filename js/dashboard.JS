@@ -1,46 +1,49 @@
 // --- FUNCIÓN DE ARRANQUE ---
-// Esto se ejecuta en cuanto la página HTML (dashboard.php) está lista.
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Cargamos todas las estadísticas
     cargarEstadisticas();
+
+    // 2. Le damos "vida" al botón del cursor
+    const btnRecordatorios = document.getElementById('btn-enviar-recordatorios');
+    if (btnRecordatorios) {
+        btnRecordatorios.addEventListener('click', () => {
+            ejecutarTareaRecordatorios();
+        });
+    }
 });
 
 
 /**
- * Función principal: Llama al "backend" para obtener las estadísticas.
+ * Función principal: Carga TODOS los datos del dashboard.
  */
 function cargarEstadisticas() {
     
     fetch('php/getDashboardStats.php')
-        .then(response => {
-            // Primer filtro: ¿Se cayó la red?
-            if (!response.ok) {
-                throw new Error(`Error de red (${response.status})`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            // Segundo filtro: ¿El API nos devolvió un error? (ej. No logueado)
             if (!data.success) {
+                // Ahora sí podemos manejar el error que venga del PHP
                 throw new Error(data.message || 'Error en la respuesta del API');
             }
 
-            // --- ¡ÉXITO! Tenemos los datos ---
-            // 1. Mandamos los datos de las tarjetas a su función
+            // 1. Pintamos las tarjetas
             actualizarKPIs(data.kpis);
             
-            // 2. Mandamos los datos del reporte a su función
+            // 2. Pintamos el reporte de artistas
             actualizarReporteArtistas(data.reporte_artistas);
+
+            // 3. Pintamos la bitácora
+            actualizarBitacora(data.log_notificaciones);
         })
         .catch(error => {
-            // --- MANEJO DE CUALQUIER ERROR ---
             console.error('Error al cargar el dashboard:', error);
-            // Mostramos el error en la página para que el admin lo vea
+            // ¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA!
             mostrarErrorEnDashboard(error.message);
         });
 }
 
 /**
- * Pinta los números en las 4 tarjetas de estadísticas.
+ * Pinta los números en las 4 tarjetas
  */
 function actualizarKPIs(kpis) {
     document.getElementById('stat-ingresos-totales').innerHTML = formatCurrency(kpis.ingresos_totales);
@@ -50,49 +53,132 @@ function actualizarKPIs(kpis) {
 }
 
 /**
- * "Dibuja" las filas de la tabla del reporte de artistas.
+ * "Dibuja" las filas de la tabla del reporte de artistas
+ * MODIFICADA PARA USAR 'es_total_general'
  */
 function actualizarReporteArtistas(reporte) {
     const tablaBody = document.getElementById('reporte-tabla-body');
-    
-    // 1. Limpiamos el "Cargando..."
-    tablaBody.innerHTML = '';
+    tablaBody.innerHTML = ''; // Limpiamos "Cargando..."
 
-    // 2. Verificamos si hay datos que mostrar
     if (reporte.length === 0) {
         tablaBody.innerHTML = '<tr><td colspan="3">No hay ingresos completados para mostrar.</td></tr>';
         return;
     }
 
-    // 3. Creamos una fila (<tr>) por cada artista
-    reporte.forEach(artista => {
-        const filaHTML = `
-            <tr>
-                <td>${artista.artista_nombre}</td>
-                <td>${formatCurrency(artista.ingresos_generados)}</td>
-                <td>${artista.citas_completadas}</td>
-            </tr>
-        `;
-        // Añadimos la fila al HTML
+    reporte.forEach(fila => {
+        let filaHTML = '';
+        
+        // 'es_total_general' será '1' para la fila ROLLUP y '0' para las demás
+        if (fila.es_total_general == 1) { 
+            // ¡Esta es la fila del GRAN TOTAL!
+            filaHTML = `
+                <tr style="background-color: #f8f9fa; font-weight: bold; border-top: 2px solid #333;">
+                    <td>GRAN TOTAL (Calculado por ROLLUP)</td>
+                    <td>${formatCurrency(fila.ingresos_generados)}</td>
+                    <td>${fila.citas_completadas}</td>
+                </tr>
+            `;
+        } else {
+            // Esta es una fila de artista normal
+            filaHTML = `
+                <tr>
+                    <td>${fila.artista_nombre}</td>
+                    <td>${formatCurrency(fila.ingresos_generados)}</td>
+                    <td>${fila.citas_completadas}</td>
+                </tr>
+            `;
+        }
         tablaBody.innerHTML += filaHTML;
     });
 }
 
 /**
- * Muestra un mensaje de error en todas las tarjetas y la tabla.
+ * "Dibuja" las filas de la tabla de bitácora.
  */
-function mostrarErrorEnDashboard(mensaje) {
-    document.getElementById('stat-ingresos-totales').innerHTML = 'Error';
-    document.getElementById('stat-citas-pendientes').innerHTML = 'Error';
-    document.getElementById('stat-precio-promedio').innerHTML = 'Error';
-    document.getElementById('stat-total-citas').innerHTML = 'Error';
+function actualizarBitacora(logs) {
+    const tablaBody = document.getElementById('bitacora-tabla-body');
+    tablaBody.innerHTML = ''; // Limpiamos "Cargando..."
 
-    const tablaBody = document.getElementById('reporte-tabla-body');
-    tablaBody.innerHTML = `<tr><td colspan="3">Error al cargar datos: ${mensaje}</td></tr>`;
+    if (logs.length === 0) {
+        tablaBody.innerHTML = '<tr><td colspan="3">La bitácora de notificaciones está vacía.</td></tr>';
+        return;
+    }
+
+    logs.forEach(log => {
+        const filaHTML = `
+            <tr>
+                <td>${log.fecha_envio}</td>
+                <td>${log.id_cita || 'N/A'}</td>
+                <td>${log.mensaje}</td>
+            </tr>
+        `;
+        tablaBody.innerHTML += filaHTML;
+    });
 }
 
 /**
- * (Helper) Función para formatear números como dinero (ej. $1,500.00)
+ * Llama al script que ejecuta el cursor (sp_EnviarRecordatoriosPendientes)
+ */
+function ejecutarTareaRecordatorios() {
+    const btn = document.getElementById('btn-enviar-recordatorios');
+    const statusSpan = document.getElementById('task-status');
+
+    btn.disabled = true;
+    statusSpan.innerHTML = 'Procesando...';
+    statusSpan.style.color = '#007bff';
+    statusSpan.style.display = 'inline';
+
+    fetch('php/runRecordatorios.php', { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusSpan.innerHTML = '¡Completado! Actualizando...';
+            statusSpan.style.color = '#28a745';
+            
+            setTimeout(() => {
+                cargarEstadisticas();
+                statusSpan.style.display = 'none';
+            }, 1500);
+
+        } else {
+            throw new Error(data.message || 'Error desconocido al ejecutar la tarea.');
+        }
+    })
+    .catch(error => {
+        console.error('Error en la tarea:', error);
+        statusSpan.innerHTML = `Error: ${error.message}`;
+        statusSpan.style.color = '#dc3545';
+    })
+    .finally(() => {
+        setTimeout(() => {
+            btn.disabled = false;
+        }, 2000);
+    });
+}
+
+// ⬇️ ¡LA FUNCIÓN QUE FALTABA! ⬇️
+/**
+ * Muestra un mensaje de error en todas las secciones del dashboard.
+ */
+function mostrarErrorEnDashboard(mensaje) {
+    // Tarjetas
+    document.getElementById('stat-ingresos-totales').innerHTML = '<span style="color: #dc3545; font-size: 1rem;">Error</span>';
+    document.getElementById('stat-citas-pendientes').innerHTML = '<span style="color: #dc3545; font-size: 1rem;">Error</span>';
+    document.getElementById('stat-precio-promedio').innerHTML = '<span style="color: #dc3545; font-size: 1rem;">Error</span>';
+    document.getElementById('stat-total-citas').innerHTML = '<span style="color: #dc3545; font-size: 1rem;">Error</span>';
+    
+    // Tabla de Reporte
+    const tablaBodyReporte = document.getElementById('reporte-tabla-body');
+    tablaBodyReporte.innerHTML = `<tr><td colspan="3" style="color: #dc3545;">Error al cargar reporte: ${mensaje}</td></tr>`;
+
+    // Tabla de Bitácora
+    const tablaBodyBitacora = document.getElementById('bitacora-tabla-body');
+    tablaBodyBitacora.innerHTML = `<tr><td colspan="3" style="color: #dc3545;">Error al cargar bitácora: ${mensaje}</td></tr>`;
+}
+
+
+/**
+ * (Helper) Función para formatear dinero (sin cambios)
  */
 function formatCurrency(value) {
     const numberValue = parseFloat(value) || 0;
