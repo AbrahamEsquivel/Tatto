@@ -2,10 +2,10 @@
 
 .perfil-layout {
     display: grid;
-    /* Dos columnas: 1/3 para info, 2/3 para reportes */
-    grid-template-columns: 1fr 2fr; 
+    grid-template-columns: 1fr 2fr;
     gap: 30px;
     align-items: flex-start;
+    margin-left: -150px;
 }
 
 .perfil-sidebar {
@@ -15,34 +15,45 @@
 
 /* Tarjeta de Información de Contacto */
 .perfil-card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    padding: 25px;
-    margin-bottom: 20px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #333;
+    padding: 2rem;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
+
 .perfil-card h2 {
-    margin-top: 0;
-    border-bottom: 1px solid #E5E7EB;
-    padding-bottom: 15px;
+    margin: 0 0 1.5rem 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
     font-size: 1.5rem;
-    color: #111827;
+    color: #fff;
+    font-weight: 300;
+    letter-spacing: 0.5px;
 }
+
 .perfil-info-item {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
     font-size: 1rem;
+    padding: 12px;
+    background: #111;
+    border-radius: 8px;
+    border: 1px solid #333;
 }
+
 .perfil-info-item i {
-    color: #9CA3AF;
+    color: #fff;
     font-size: 1.1rem;
     width: 30px;
     text-align: center;
     margin-right: 10px;
 }
+
 .perfil-info-item span {
-    color: #374151;
+    color: #e0e0e0;
     font-weight: 500;
 }
 
@@ -52,15 +63,40 @@
     grid-template-columns: 1fr 1fr;
     gap: 15px;
 }
-.kpi-card { /* Re-usamos el estilo del dashboard */
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+.kpi-card {
+    background: #1a1a1a;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
-.kpi-card h3 { margin-top: 0; font-size: 1rem; color: #555; }
-.kpi-card .stat-number { font-size: 2rem; font-weight: bold; color: #111827; }
-.kpi-card .stat-revenue { color: #28a745; }
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-card .stat-number {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+}
+
+.kpi-card .stat-revenue {
+    color: #fff;
+}
 
 /* Contenido Principal (Tablas) */
 .perfil-main {
@@ -68,18 +104,172 @@
     flex-direction: column;
     gap: 30px;
 }
-.report-section { /* Re-usamos estilo del dashboard */
-    background: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+.report-section {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
-.report-section h2 { margin-top: 0; font-size: 1.5rem; }
-.report-section table { width: 100%; border-collapse: collapse; }
-.report-section th, .report-section td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+
+.report-section h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.report-section h2 i {
+    color: #fff;
+    opacity: 0.8;
+}
+
+.report-section table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.report-section th,
+.report-section td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #333;
     text-align: left;
 }
-.report-section th { background-color: #f8f9fa; }
-.monto-pago { font-weight: bold; color: #28a745; }
+
+.report-section th {
+    background-color: #111;
+    color: #fff;
+    font-weight: 400;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.report-section td {
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+.report-section tr:hover {
+    background-color: #222;
+}
+
+.monto-pago {
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Estados de carga y vacío */
+.loading-text {
+    text-align: center;
+    color: #888;
+    padding: 40px;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #888;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    color: #fff;
+    margin: 0 0 8px 0;
+    font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .perfil-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .perfil-sidebar {
+        position: static;
+    }
+    
+    .perfil-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .perfil-layout {
+        gap: 20px;
+    }
+    
+    .perfil-card,
+    .report-section {
+        padding: 1.5rem;
+    }
+    
+    .perfil-kpis {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .kpi-card {
+        padding: 1.25rem;
+    }
+    
+    .report-section th,
+    .report-section td {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfil-card,
+    .report-section {
+        padding: 1.25rem;
+    }
+    
+    .perfil-card h2,
+    .report-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .kpi-card .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .report-section table {
+        font-size: 0.85rem;
+    }
+    
+    .report-section th,
+    .report-section td {
+        padding: 10px 12px;
+    }
+    
+    .perfil-info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .perfil-info-item i {
+        margin-right: 0;
+    }
+}

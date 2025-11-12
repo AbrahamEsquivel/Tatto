@@ -522,3 +522,21 @@
         flex: none;
     }
 }
+
+.btn-crear-admin {
+    background: #22C55E; /* Verde */
+    color: #fff;
+    padding: 12px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+.btn-crear-admin:hover {
+    background: #16A34A;
+}

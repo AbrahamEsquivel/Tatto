@@ -45,6 +45,12 @@
                         <i class="fas fa-search"></i>
                         <input type="text" id="search-citas" placeholder="Cliente, artista, servicio...">
                     </div>
+                    <div class="filter-group" style="border-top: 1px solid #333; padding-top: 20px; margin-top: 5px;">
+                        <label style="color: #fff;"><i class="fas fa-tools"></i> Herramientas de Admin:</label>
+                        <a href="admin-crear-cita.php" class="btn-crear-admin">
+                            <i class="fas fa-calendar-plus"></i> Registrar Cita Presencial
+                        </a>
+                    </div>
                 </div>
             </div>
 

@@ -111,7 +111,7 @@
             <div class="hero-animacion">
                 <img src="img/LogoLetrasBlanco.png" alt="Logo Tatuajes" width="600px" height="600px">
                 <!--<h1>TU HISTORIA , NUESTA TINTA</h1>-->
-                <a class="boton"href="agendar.php" target="_blank">Reserva aqui</a>
+                <a class="boton"href="agendar.php">Reserva aqui</a>
             </div>
         </div>        
     </section>
