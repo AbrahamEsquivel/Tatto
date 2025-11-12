@@ -264,8 +264,9 @@ function escapeHtml(text) {
 
 // --- 9. FUNCIONES DE ACCIÓN (Placeholders) ---
 function verDetalle(tipo, id_persona) {
-    console.log('Ver detalle:', tipo, id_persona);
-    alert(`Ver detalle de ${tipo} ID_PERSONA: ${id_persona}\n\nFunción en desarrollo.`);
+    console.log('Viendo perfil de:', tipo, id_persona);
+    // Redirigimos a la nueva página de perfil
+    window.location.href = `perfil-persona.php?id=${id_persona}`;
 }
 
 function editarRegistro(tipo, id_persona) {

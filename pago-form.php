@@ -5,6 +5,7 @@
     // 1. DEFINIR VARIABLES POR DEFECTO (MODO "CREAR")
     $id_pago = null;
     $monto = '';
+    $is_readonly = '';
     $fecha_pago = date('Y-m-d'); // Fecha de hoy por defecto
     $id_tipo_pago_sel = null;
     $id_metodo_pago_sel = null;
@@ -20,7 +21,11 @@
         $stmt_cita->execute();
         $cita = $stmt_cita->get_result()->fetch_assoc();
         $stmt_cita->close();
-    
+        if (isset($_GET['monto']) && !empty($_GET['monto'])) {
+            $monto = (float)$_GET['monto'];
+            $is_readonly = 'readonly';
+        }
+        
     } 
     // 3. BUSCAR DATOS DEL PAGO (MODO "EDITAR") (viene de ?id_pago=...)
     else if (isset($_GET['id_pago'])) {
@@ -92,6 +97,11 @@
     }
     .cita-info-box h3 { margin-top: 0; color: #1F2937; }
     .cita-info-box p { margin: 5px 0; color: #374151; }
+    .form-container .form-group input[readonly] {
+    background-color: #eee; /* Color gris */
+    color: #555;
+    cursor: not-allowed;
+}
 </style>
 
 <div class="form-container">
@@ -118,8 +128,7 @@
         <h3>Detalles del Pago</h3>
         <div class="form-group">
             <label for="monto">Monto (MXN):</label>
-            <input type="number" id="monto" name="monto" step="0.01" min="0" value="<?php echo $monto; ?>" required>
-        </div>
+            <input type="number" id="monto" name="monto" step="0.01" min="0" value="<?php echo $monto; ?>" required <?php echo $is_readonly; ?>>
         <div class="form-group">
             <label for="fecha_pago">Fecha del Pago:</label>
             <input type="date" id="fecha_pago" name="fecha_pago" value="<?php echo $fecha_pago; ?>" required>

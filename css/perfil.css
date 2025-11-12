@@ -1,0 +1,85 @@
+/* css/perfil.css */
+
+.perfil-layout {
+    display: grid;
+    /* Dos columnas: 1/3 para info, 2/3 para reportes */
+    grid-template-columns: 1fr 2fr; 
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.perfil-sidebar {
+    position: sticky;
+    top: 30px;
+}
+
+/* Tarjeta de Información de Contacto */
+.perfil-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 25px;
+    margin-bottom: 20px;
+}
+.perfil-card h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 15px;
+    font-size: 1.5rem;
+    color: #111827;
+}
+.perfil-info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+.perfil-info-item i {
+    color: #9CA3AF;
+    font-size: 1.1rem;
+    width: 30px;
+    text-align: center;
+    margin-right: 10px;
+}
+.perfil-info-item span {
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Tarjetas de Estadísticas (KPIs) */
+.perfil-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.kpi-card { /* Re-usamos el estilo del dashboard */
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.kpi-card h3 { margin-top: 0; font-size: 1rem; color: #555; }
+.kpi-card .stat-number { font-size: 2rem; font-weight: bold; color: #111827; }
+.kpi-card .stat-revenue { color: #28a745; }
+
+/* Contenido Principal (Tablas) */
+.perfil-main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.report-section { /* Re-usamos estilo del dashboard */
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.report-section h2 { margin-top: 0; font-size: 1.5rem; }
+.report-section table { width: 100%; border-collapse: collapse; }
+.report-section th, .report-section td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+.report-section th { background-color: #f8f9fa; }
+.monto-pago { font-weight: bold; color: #28a745; }
