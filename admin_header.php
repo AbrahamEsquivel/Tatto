@@ -58,6 +58,17 @@
                <i class="fas fa-money-bill-wave"></i>
                <span>Historial de Pagos</span>
             </a>
+
+             <a href="artistas.php" 
+               class="<?php if($pagina_actual == 'artistas.php' || $pagina_actual == 'artista-form.php') echo 'active'; ?>">
+               Gestión de Artistas
+            </a>
+        </nav>
+
+       
+
+            
+            
         </nav>
         
         <div class="footer-link">

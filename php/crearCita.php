@@ -17,10 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tatuaje_descripcion = trim($_POST['tatuaje_descripcion']);
     $id_estilo = (int)$_POST['id_estilo'];
     $id_parte_cuerpo = (int)$_POST['id_parte_cuerpo'];
+    $id_artista = (int)$_POST['id_artista']; // ⬇️ AÑADIDO ⬇️
 
     // 2. Preparar la llamada al Procedimiento Almacenado
-    // (Este SP ya maneja la lógica de cliente nuevo/existente y la transacción)
-    $sql = "CALL sp_CrearCitaCliente(?, ?, ?, ?, ?, ?, ?, ?)";
+    // (Ahora tiene 9 signos de interrogación en lugar de 8)
+    $sql = "CALL sp_CrearCitaCliente(?, ?, ?, ?, ?, ?, ?, ?, ?)"; // ⬇️ MODIFICADO ⬇️
     
     $stmt = $conexion->prepare($sql);
     
@@ -31,15 +32,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // 3. Vincular los parámetros
-    $stmt->bind_param("ssssssii", 
-        $nombre, $apellido, $email, $telefono, 
-        $fecha_hora, $tatuaje_descripcion, $id_estilo, $id_parte_cuerpo
+    // (Ahora es 'ssssssiii' en lugar de 'ssssssii')
+    $stmt->bind_param("ssssssiii", // ⬇️ MODIFICADO ⬇️
+        $nombre, 
+        $apellido, 
+        $email, 
+        $telefono, 
+        $fecha_hora, 
+        $tatuaje_descripcion, 
+        $id_estilo, 
+        $id_parte_cuerpo,
+        $id_artista // ⬇️ AÑADIDO ⬇️
     );
 
     // 4. Ejecutar la llamada
     if ($stmt->execute()) {
         // ¡ÉXITO!
-        // La transacción (dentro del SP) se completó
         echo json_encode(['success' => true, 'message' => '¡Cita registrada con éxito!']);
 
     } else {
