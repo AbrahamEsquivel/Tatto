@@ -1,105 +1,127 @@
 <?php
-    session_start(); // Inicia o reanuda la sesión
-
-    // 1. EL CHECKPOINT DE SEGURIDAD
-    if ( !isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true ) {
-        header('Location: login.html');
-        exit; 
-    }
-    
-    $nombre_artista = htmlspecialchars($_SESSION['nombre_artista']);
+    include 'admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Directorio General - Admin</title>
-    <link rel="stylesheet" href="css/style.css"> 
-    
-    <style>
-        /* Re-usamos los mismos estilos del Dashboard */
-        body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .admin-header a { background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; margin-left: 10px; }
-        .admin-header a.btn-logout { background-color: #dc3545; }
+<title>Directorio General - Admin</title>
 
-        .content-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
+<!-- Incluir CSS específico para directorio -->
+<link rel="stylesheet" href="css/directorio.css">
 
-        /* Estilos de la tabla de reporte (igual que en dashboard) */
-        .report-section {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .report-section table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .report-section th, .report-section td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        .report-section th { background-color: #f8f9fa; }
-
-        /* Etiqueta para el tipo de persona */
-        .tipo-cliente { 
-            background-color: #28a745; 
-            color: white; 
-            padding: 3px 8px; 
-            border-radius: 4px; 
-            font-size: 0.9em;
-        }
-        .tipo-artista { 
-            background-color: #007bff; 
-            color: white; 
-            padding: 3px 8px; 
-            border-radius: 4px; 
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-
-    <header class="admin-header">
-        <h1>Directorio General (Clientes y Artistas)</h1>
-        <div>
-            <a href="dashboard.php" style="background-color: #17a2b8;">Volver al Dashboard</a>
-            <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
+<div class="admin-content">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-address-book"></i> Directorio General</h1>
+            <p>Gestiona y visualiza todos los clientes y artistas del sistema</p>
         </div>
-    </header>
+    </div>
 
-    <main class="content-container">
+    <!-- Estadísticas rápidas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon clients">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number" id="total-clientes">0</span>
+                <span class="stat-label">Total Clientes</span>
+            </div>
+        </div>
         
-        <section class="report-section">
-            <p>Esta tabla combina a clientes y artistas en una sola lista usando <code>UNION</code> en la base de datos.</p>
-            <table>
+        <div class="stat-card">
+            <div class="stat-icon artists">
+                <i class="fas fa-palette"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number" id="total-artistas">0</span>
+                <span class="stat-label">Total Artistas</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number" id="total-registros">0</span>
+                <span class="stat-label">Registros Totales</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <label for="filter-tipo"><i class="fas fa-filter"></i> Filtrar por Tipo:</label>
+            <select id="filter-tipo" class="filter-select">
+                <option value="todos">Todos los Registros</option>
+                <option value="Cliente">Solo Clientes</option>
+                <option value="Artista">Solo Artistas</option>
+            </select>
+        </div>
+        
+        <div class="search-group">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-directorio" placeholder="Buscar por nombre, email o teléfono...">
+            </div>
+        </div>
+        
+        <div class="actions-group">
+            <button class="btn-export" id="btn-exportar">
+                <i class="fas fa-file-export"></i> Exportar CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenedor del directorio -->
+    <div class="directorio-container">
+        <div class="directorio-header">
+            <h3><i class="fas fa-list"></i> Lista del Directorio</h3>
+            <span class="registros-count" id="registros-count">Cargando...</span>
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table" id="tabla-directorio">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Tipo</th>
+                        <th class="sortable" data-sort="nombre">
+                            <i class="fas fa-user"></i> Nombre
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th class="sortable" data-sort="apellido">
+                            <i class="fas fa-user"></i> Apellido
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th class="sortable" data-sort="email">
+                            <i class="fas fa-envelope"></i> Email
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th class="sortable" data-sort="telefono">
+                            <i class="fas fa-phone"></i> Teléfono
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th class="sortable" data-sort="tipo">
+                            <i class="fas fa-tag"></i> Tipo
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th class="acciones">
+                            <i class="fas fa-cog"></i> Acciones
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="directorio-tabla-body">
                     <tr>
-                        <td colspan="5">Cargando directorio...</td>
+                        <td colspan="6" class="loading-text">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando directorio...
+                        </td>
                     </tr>
                 </tbody>
             </table>
-        </section>
+        </div>
+    </div>
+</div>
 
-    </main>
-    
-    <script src="js/directorio.js"></script>
+<script src="js/directorio.js"></script>
 
-</body>
-</html>
+<?php
+    include 'admin_footer.php';
+?>

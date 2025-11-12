@@ -1,0 +1,524 @@
+/* css/agenda.css */
+
+/* Estilos específicos para la agenda */
+.admin-content {
+    padding: 30px;
+    background-color: #0f0f0f;
+    min-height: 100vh;
+    margin-left: 120px;
+}
+
+/* Header de página */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.header-content h1 {
+    color: #fff;
+    font-weight: 300;
+    font-size: 2rem;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-content p {
+    color: #888;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Layout principal con sidebar */
+.agenda-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+/* Sidebar izquierdo - Filtros y estadísticas */
+.agenda-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    position: sticky;
+    top: 30px;
+}
+
+/* Sección de filtros */
+.filters-section {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-group label {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-select, .search-input input {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.filter-select:focus, .search-input input:focus {
+    outline: none;
+    border-color: #555;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.search-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input i {
+    position: absolute;
+    left: 12px;
+    color: #888;
+    z-index: 1;
+}
+
+.search-input input {
+    padding-left: 40px;
+}
+
+/* Estadísticas en sidebar */
+.stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-card {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stat-icon.pending { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
+.stat-icon.confirmed { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+.stat-icon.completed { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+.stat-icon.cancelled { background: rgba(244, 67, 54, 0.2); color: #F44336; }
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* Contenedor principal de citas */
+.agenda-main {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.citas-container {
+    background: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #333;
+    overflow: hidden;
+}
+
+.citas-header {
+    padding: 25px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+}
+
+.citas-header h3 {
+    color: #fff;
+    font-weight: 400;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.citas-count {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Grid de citas - 3 columnas */
+.citas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+/* Tarjetas de cita en grid */
+.cita-card {
+    background: #111;
+    border: 1px solid #333;
+    margin: 0;
+    border-radius: 0;
+    border-left: 4px solid #333;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Bordes entre tarjetas */
+.cita-card:nth-child(3n+1) {
+    border-left: none;
+}
+
+.cita-card:nth-child(n+4) {
+    border-top: 1px solid #333;
+}
+
+.cita-card:hover {
+    background: #1a1a1a;
+    border-color: #555;
+    z-index: 2;
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cita-card.pendiente { border-left-color: #FFC107; }
+.cita-card.confirmada { border-left-color: #4CAF50; }
+.cita-card.completada { border-left-color: #2196F3; }
+.cita-card.cancelada { border-left-color: #F44336; }
+
+.cita-card.cancelada {
+    background: rgba(244, 67, 54, 0.05);
+    opacity: 0.8;
+}
+
+.cita-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cita-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.cita-cliente {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    line-height: 1.3;
+}
+
+.cita-fecha {
+    color: #888;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.estado-cita {
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.estado-pendiente { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
+.estado-confirmada { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+.estado-completada { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+.estado-cancelada { background: rgba(244, 67, 54, 0.2); color: #F44336; }
+
+.cita-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    color: #fff;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.3;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    border: 1px solid;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+}
+
+.btn-editar {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
+    border-color: #3B82F6;
+}
+
+.btn-editar:hover {
+    background: #3B82F6;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-cancelar {
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border-color: #EF4444;
+}
+
+.btn-cancelar:hover {
+    background: #EF4444;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-completar {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22C55E;
+    border-color: #22C55E;
+}
+
+.btn-completar:hover {
+    background: #22C55E;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-disabled {
+    background: #6c757d;
+    color: #fff;
+    border-color: #6c757d;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Estados vacíos */
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    color: #888;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    color: #fff;
+    margin: 0 0 8px 0;
+    font-weight: 400;
+}
+
+.loading-state {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    color: #888;
+}
+
+.loading-state i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .citas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cita-card:nth-child(3n+1) {
+        border-left: 1px solid #333;
+    }
+    
+    .cita-card:nth-child(odd) {
+        border-left: none;
+    }
+    
+    .cita-card:nth-child(n+3) {
+        border-top: 1px solid #333;
+    }
+}
+
+@media (max-width: 968px) {
+    .agenda-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .agenda-sidebar {
+        position: static;
+    }
+    
+    .filters-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .filter-group {
+        margin-bottom: 0;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-content {
+        padding: 20px 15px;
+    }
+    
+    .citas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cita-card:nth-child(n+2) {
+        border-top: 1px solid #333;
+    }
+    
+    .cita-card:nth-child(odd) {
+        border-left: 1px solid #333;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .filters-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .cita-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
+    
+    .btn-action {
+        flex: none;
+    }
+}

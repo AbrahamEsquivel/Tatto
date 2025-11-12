@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // (Usamos (int) para sanitizar los números)
     $id_cita = (int)$_POST['id_cita'];
     $id_tatuaje = (int)$_POST['id_tatuaje'];
-    
+    $id_estilo = (int)$_POST['id_estilo'];
     $fecha_hora = $_POST['fecha_hora'];
     $id_artista = (int)$_POST['id_artista'];
     $id_estado_cita = (int)$_POST['id_estado_cita'];
@@ -39,17 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // ---- OPERACIÓN 1: ACTUALIZAR LA TABLA TATUAJE ----
         $sql1 = "UPDATE tatuaje SET 
-                    descripcion = ?, 
-                    precio_total = ? 
-                 WHERE id = ?";
-        
-        $stmt1 = $conexion->prepare($sql1);
-        // "sdi" = string, double, integer
-        $stmt1->bind_param("sdi", 
-            $tatuaje_descripcion, 
-            $precio_total, 
-            $id_tatuaje
-        );
+            descripcion = ?, 
+            precio_total = ?,
+            id_estilo = ?  /* ⬅️ AÑADE ESTA LÍNEA */
+         WHERE id = ?";
+
+            $stmt1 = $conexion->prepare($sql1);
+            // "sdi" cambia a "sdii"
+            $stmt1->bind_param("sdii", // ⬅️ CAMBIA ESTO
+                $tatuaje_descripcion, 
+                $precio_total, 
+                $id_estilo, // ⬅️ AÑADE ESTA LÍNEA
+                $id_tatuaje
+            );
         $stmt1->execute();
         $stmt1->close();
 

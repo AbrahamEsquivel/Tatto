@@ -1,0 +1,383 @@
+/* css/dashboard.css */
+
+/* Estilos específicos para el dashboard */
+.admin-content {
+    padding: 30px;
+    background-color: #0f0f0f;
+    min-height: 100vh;
+}
+
+/* Layout principal en grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 25px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* KPIs - ocupa toda la primera fila */
+#datos1 {
+    grid-column: 1 / -1; /* Ocupa ambas columnas */
+    grid-row: 1;
+}
+
+/* Ingresos por Artista - columna izquierda, fila 2 */
+#datos2 {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+/* Herramientas - columna derecha, fila 2 */
+#datos3 {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+/* Bitácora - ocupa toda la tercera fila */
+#datos4 {
+    grid-column: 1 / -1; /* Ocupa ambas columnas */
+    grid-row: 3;
+}
+
+/* Grid de KPIs */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 0; /* Quitamos el margin porque ahora lo controla el grid padre */
+}
+
+.kpi-card {
+    background: #1a1a1a;
+    padding: 30px 25px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: fit-content;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.kpi-card:hover::before {
+    transform: scaleX(1);
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.kpi-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #b0b0b0;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.kpi-card h3 i {
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.kpi-card .stat-number {
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: #fff;
+    margin: 0 0 8px 0;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+.kpi-card .stat-revenue { 
+    color: #4CAF50; 
+}
+
+.kpi-card .stat-pending { 
+    color: #FFC107; 
+}
+
+.kpi-card .stat-trend {
+    font-size: 0.9rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+/* Secciones generales */
+.report-section {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    margin-bottom: 0; /* Quitamos el margin porque ahora lo controla el grid padre */
+    height: fit-content;
+}
+
+.report-section h2 {
+    color: #fff;
+    font-weight: 300;
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.report-section h2 i {
+    color: #fff;
+}
+
+.section-subtitle {
+    color: #888;
+    margin: 0 0 25px 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Tablas */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #333;
+    margin-top: 10px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #111;
+}
+
+.data-table th,
+.data-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+.data-table th {
+    background-color: #111;
+    color: #fff;
+    font-weight: 400;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table th i {
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.data-table tr:hover {
+    background-color: #222;
+}
+
+.data-table td {
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+
+.loading-text {
+    text-align: center;
+    color: #888;
+    padding: 30px;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Herramientas administrativas */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.tool-card {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+    border-color: #555;
+    transform: translateY(-2px);
+}
+
+.tool-icon {
+    background: #000;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1.5rem;
+    color: #fff;
+    min-width: 60px;
+    text-align: center;
+    border: 1px solid #333;
+}
+
+.tool-content {
+    flex: 1;
+}
+
+.tool-content h4 {
+    margin: 0 0 8px 0;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.tool-content p {
+    color: #888;
+    margin: 0 0 20px 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.btn-tool {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-tool:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.btn-tool:disabled {
+    background: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Mensajes de estado */
+.status-message {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0 0 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid;
+}
+
+.status-success {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.status-error {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: #F44336;
+    color: #F44336;
+}
+
+.status-loading {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: #FFC107;
+    color: #FFC107;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
+    
+    #datos1,
+    #datos2,
+    #datos3,
+    #datos4 {
+        grid-column: 1;
+    }
+    
+    #datos1 { grid-row: 1; }
+    #datos2 { grid-row: 2; }
+    #datos3 { grid-row: 3; }
+    #datos4 { grid-row: 4; }
+}
+
+@media (max-width: 768px) {
+    .admin-content {
+        padding: 20px 15px;
+    }
+    
+    .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .kpi-card {
+        padding: 25px 20px;
+    }
+    
+    .kpi-card .stat-number {
+        font-size: 2.4rem;
+    }
+    
+    .report-section {
+        padding: 25px 20px;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .tool-icon {
+        align-self: center;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+}

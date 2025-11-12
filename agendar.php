@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
     <link rel="shortcut icon" href="img/LogoLetrasBlanco.png">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="css/style.css">
     <title>Agenda tu Cita - B-INK tattoo</title>
     <style>
@@ -205,11 +206,19 @@
                 <div class="form-group">
                     <label for="id_estilo">Estilo de Tatuaje (si lo conoces):</label>
                     <select id="id_estilo" name="id_estilo" required>
-                        <option value="1">Realismo</option>
-                        <option value="2">Tradicional</option>
-                        <option value="3">Blackwork</option>
-                        <option value="4">Acuarela</option>
-                        <option value="5">Japonés</option>
+                        <option value="">-- Selecciona un estilo --</option>
+                        
+                        <?php
+                            include 'php/conexion.php'; 
+                            $query_estilos = "SELECT id, nombre FROM estilo_tatuaje ORDER BY nombre";
+                            $resultado_estilos = $conexion->query($query_estilos);
+                            
+                            while($fila_estilo = $resultado_estilos->fetch_assoc()) {
+                                echo '<option value="' . $fila_estilo['id'] . '">' . htmlspecialchars($fila_estilo['nombre']) . '</option>';
+                            }
+                            $conexion->close();
+                        ?>
+                        
                     </select>
                 </div>
                  <div class="form-group">

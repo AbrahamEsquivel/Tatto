@@ -38,12 +38,11 @@ function cargarHistorialPagos() {
             // 5. "Dibujamos" cada fila de la tabla
             data.pagos.forEach(pago => {
                 
-                // Usamos la función 'formatCurrency' que "robamos" de dashboard.js
-                // (Si da error, es porque dashboard.js no se cargó)
                 const montoFormateado = (typeof formatCurrency === 'function') 
                                         ? formatCurrency(pago.monto) 
                                         : `$${pago.monto}`;
 
+                // ⬇️ HTML MODIFICADO ⬇️
                 const filaHTML = `
                     <tr>
                         <td>${pago.id_pago}</td>
@@ -53,12 +52,17 @@ function cargarHistorialPagos() {
                         <td>${pago.tipo_pago}</td>
                         <td>${pago.metodo_pago}</td>
                         <td class="monto-pago">${montoFormateado}</td>
+                        
+                        <td>
+                            <a href="pago-form.php?id_pago=${pago.id_pago}" class="btn-editar-pago">
+                                <i class="fas fa-pen"></i> Editar
+                            </a>
+                        </td>
                     </tr>
                 `;
-                // Añadimos la fila al HTML
+                // ⬆️ FIN DE HTML MODIFICADO ⬆️
                 tablaBody.innerHTML += filaHTML;
             });
-
         })
         .catch(error => {
             // --- MANEJO DE CUALQUIER ERROR ---

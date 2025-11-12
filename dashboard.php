@@ -1,196 +1,118 @@
 <?php
-    session_start(); // Inicia o reanuda la sesión
-
-    // 1. EL CHECKPOINT DE SEGURIDAD
-    if ( !isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true ) {
-        header('Location: login.html');
-        exit; 
-    }
-    
-    $nombre_artista = htmlspecialchars($_SESSION['nombre_artista']);
+    include 'admin_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Admin</title>
-    <link rel="stylesheet" href="css/style.css"> 
+
+<title>Dashboard - Admin</title>
+
+<!-- Incluir el CSS específico del dashboard -->
+<link rel="stylesheet" href="css/dashboard.css">
+
+<!-- Cambia "padre" por "dashboard-grid" -->
+<div class="dashboard-grid">
     
-    <style>
-        /* Re-usamos estilos de admin */
-        body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .admin-header a { background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; margin-left: 10px; }
-        .admin-header a.btn-logout { background-color: #dc3545; }
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        /* Contenedor para las "Tarjetas" de estadísticas */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .kpi-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .kpi-card h3 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            color: #555;
-        }
-        .kpi-card .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #007bff;
-            margin-top: 10px;
-        }
-        /* Color especial para el dinero */
-        .kpi-card .stat-revenue {
-            color: #28a745;
-        }
-        .kpi-card .stat-pending {
-            color: #ffc107;
-        }
-
-        /* Contenedor para los "Reportes" */
-        .report-section {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .report-section table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .report-section th, .report-section td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        .report-section th { background-color: #f8f9fa; }
-
-        .task-section {
-    background: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-}
-.btn-admin-task {
-    background-color: #ffc107; /* Amarillo */
-    color: #212529; /* Texto oscuro */
-    font-weight: bold;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s;
-}
-.btn-admin-task:hover {
-    background-color: #e0a800;
-}
-.btn-admin-task:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-    </style>
-</head>
-<body>
-<header class="admin-header">
-    <h1>Dashboard (¡Hola, <?php echo $nombre_artista; ?>!)</h1>
-    <div>
-        <a href="directorio.php" style="background-color: #ffc107; color: #333;">Directorio General</a>
-        
-        <a href="historial-pagos.php" style="background-color: #6f42c1; color: white;">Historial de Pagos</a>
-        
-        <a href="agenda.php">Ver Agenda Completa</a>
-        <a href="php/logout.php" class="btn-logout">Cerrar Sesión</a>
+<section class="kpi-grid" id="datos1">
+    <div class="kpi-card">
+        <h3><i class="fas fa-money-bill-wave"></i> Ingresos Totales</h3>
+        <div class="stat-number stat-revenue" id="stat-ingresos-totales">$1,150.00</div>
+        <div class="stat-trend"><i class="fas fa-chart-line"></i> Citas completadas</div>
     </div>
-</header>
+    <div class="kpi-card">
+        <h3><i class="fas fa-clock"></i> Citas Pendientes</h3>
+        <div class="stat-number stat-pending" id="stat-citas-pendientes">3</div>
+        <div class="stat-trend"><i class="fas fa-exclamation-circle"></i> Por atender</div>
+    </div>
+    <div class="kpi-card">
+        <h3><i class="fas fa-tag"></i> Precio Promedio</h3>
+        <div class="stat-number" id="stat-precio-promedio">$383.33</div>
+        <div class="stat-trend"><i class="fas fa-calculator"></i> Por tatuaje</div>
+    </div>
+    <div class="kpi-card">
+        <h3><i class="fas fa-calendar-check"></i> Total Citas</h3>
+        <div class="stat-number" id="stat-total-citas">11</div>
+        <div class="stat-trend"><i class="fas fa-database"></i> Registradas</div>
+    </div>
+</section>
 
-    <main class="dashboard-container">
-        
-        <section class="kpi-grid">
-            <div class="kpi-card">
-                <h3>Ingresos Totales (Completadas)</h3>
-                <div class="stat-number stat-revenue" id="stat-ingresos-totales">$...</div>
+<section class="report-section" id="datos2">
+    <h2><i class="fas fa-chart-pie"></i> Ingresos por Artista</h2>
+    <p class="section-subtitle">Citas completadas en el sistema</p>
+    <div class="table-container">
+        <table class="data-table" id="reporte-ingresos-artista">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-user"></i> Artista</th>
+                    <th><i class="fas fa-dollar-sign"></i> Ingresos Generados</th>
+                    <th><i class="fas fa-check-circle"></i> Citas Completadas</th>
+                </tr>
+            </thead>
+            <tbody id="reporte-tabla-body">
+                <tr>
+                    <td>Ana Tattoo</td>
+                    <td>$1,150.00</td>
+                    <td>4</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="report-section" id="datos3">
+    <h2><i class="fas fa-tools"></i> Herramientas Administrativas</h2>
+    <p class="section-subtitle">Ejecuta tareas de mantenimiento en la base de datos</p>
+    <div class="tools-grid">
+        <div class="tool-card">
+            <div class="tool-icon">
+                <i class="fas fa-bell"></i>
             </div>
-            <div class="kpi-card">
-                <h3>Citas Pendientes</h3>
-                <div class="stat-number stat-pending" id="stat-citas-pendientes">...</div>
+            <div class="tool-content">
+                <h4>Enviar Recordatorios</h4>
+                <p>Envía notificaciones automáticas a citas pendientes</p>
+                <button id="btn-enviar-recordatorios" class="btn-tool">
+                    <i class="fas fa-play"></i> Ejecutar Ahora
+                </button>
             </div>
-            <div class="kpi-card">
-                <h3>Precio Promedio por Tatuaje</h3>
-                <div class="stat-number" id="stat-precio-promedio">$...</div>
-            </div>
-            <div class="kpi-card">
-                <h3>Total Citas Registradas</h3>
-                <div class="stat-number" id="stat-total-citas">...</div>
-            </div>
-        </section>
+        </div>
+    </div>
+    <div id="task-status" class="status-message" style="display: none;"></div>
+</section>
 
-        <section class="report-section">
-            <h2>Ingresos por Artista (Citas Completadas)</h2>
-            <table id="reporte-ingresos-artista">
-                <thead>
-                    <tr>
-                        <th>Artista</th>
-                        <th>Ingresos Generados</th>
-                        <th>Citas Completadas</th>
-                    </tr>
-                </thead>
-                <tbody id="reporte-tabla-body">
-                    <tr>
-                        <td colspan="3">Cargando reporte...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-     </table>
-        </section>
+<section class="report-section" id="datos4">
+    <h2><i class="fas fa-history"></i> Bitácora de Notificaciones</h2>
+    <p class="section-subtitle">Últimos 10 eventos del sistema de notificaciones</p>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-calendar"></i> Fecha de Envío</th>
+                    <th><i class="fas fa-id-card"></i> ID Cita</th>
+                    <th><i class="fas fa-envelope"></i> Mensaje</th>
+                </tr>
+            </thead>
+            <tbody id="bitacora-tabla-body">
+                <tr>
+                    <td>2025-11-11 08:52:31</td>
+                    <td>7</td>
+                    <td>Simulación: Enviando recordatorio a asae@gmail.com</td>
+                </tr>
+                <tr>
+                    <td>2025-11-11 08:29:36</td>
+                    <td>7</td>
+                    <td>Simulación: Enviando recordatorio a asae@gmail.com</td>
+                </tr>
+                <tr>
+                    <td>2025-11-11 08:20:02</td>
+                    <td>3</td>
+                    <td>Simulación: Enviando recordatorio a abrahambarrientos@46@gmail.com</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 
-        <section class="task-section">
-            <h2>Herramientas Administrativas</h2>
-            <p>Ejecuta tareas de mantenimiento en la base de datos.</p>
-            <button id="btn-enviar-recordatorios" class="btn-admin-task">
-                Ejecutar: Enviar Recordatorios a Citas Pendientes
-            </button>
-            <span id="task-status" style="margin-left: 15px; font-weight: bold; display: none;"></span>
-        </section>
+</div> <!-- Cierra dashboard-grid -->
 
-        <section class="report-section">
-            <h2>Bitácora de Notificaciones Recientes</h2>
-            <p>Muestra los últimos 10 eventos de la tabla <code>log_notificaciones</code>.</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha de Envío</th>
-                        <th>ID Cita</th>
-                        <th>Mensaje</th>
-                    </tr>
-                </thead>
-                <tbody id="bitacora-tabla-body">
-                    <tr><td colspan="3">Cargando bitácora...</td></tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+<script src="js/dashboard.js"></script>
 
-    
-    <script src="js/dashboard.js"></script>
-
-</body>
-</html>
+<?php
+    include 'admin_footer.php';
+?>

@@ -72,10 +72,10 @@ function actualizarReporteArtistas(reporte) {
         if (fila.es_total_general == 1) { 
             // ¡Esta es la fila del GRAN TOTAL!
             filaHTML = `
-                <tr style="background-color: #f8f9fa; font-weight: bold; border-top: 2px solid #333;">
+                <tr style="font-weight: bold; border-top: 2px solid #ff0000ff;">
                     <td>GRAN TOTAL (Calculado por ROLLUP)</td>
                     <td>${formatCurrency(fila.ingresos_generados)}</td>
-                    <td>${fila.citas_completadas}</td>
+                    
                 </tr>
             `;
         } else {

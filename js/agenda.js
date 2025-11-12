@@ -1,130 +1,328 @@
+// js/agenda.js (Versión 3.0 - Lógica de filtrado en memoria)
+
+// --- Variable Global ---
+// Guardaremos todas las citas aquí. Esta es nuestra "única fuente de verdad".
+let allCitas = [];
+
+// --- Función de Arranque ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Esta función ya la tenías
+    // 1. Cargamos las citas por primera vez
     cargarCitas();
+    
+    // 2. Activamos los filtros
+    configurarFiltros();
 
-    // ⬇️ NUEVO (PARTE 1) ⬇️
-    // Lógica para "escuchar" clics en los botones de cancelar
-    // Se añade al 'container' para que funcione con botones creados dinámicamente
-    const container = document.getElementById('agenda-container');
-    if (container) {
-        container.addEventListener('click', (event) => {
-
-            // Verificamos si el clic fue en un botón de cancelar
-            if (event.target.classList.contains('btn-cancelar')) {
-                event.preventDefault(); // Evita que el enlace <a> navegue
-
-                // Obtenemos el ID que guardamos en 'data-id'
-                const idCita = event.target.dataset.id;
-
-                // Si el botón está deshabilitado, no hacemos nada
-                if (event.target.classList.contains('btn-disabled')) {
-                    return;
-                }
-
-                // Pedimos confirmación al admin
-                if (confirm(`¿Estás seguro de que quieres CANCELAR la cita ID: ${idCita}? \n\nEsta acción cambiará el estado a 'Cancelada'.`)) {
-                    cancelarCita(idCita);
-                }
-            }
-        });
-    }
-    // ⬆️ FIN DE NUEVO (PARTE 1) ⬆️
+    // 3. Activamos los botones de Cancelar/Completar
+    configurarListenersDeAcciones();
 });
 
+/**
+ * 1. Carga TODAS las citas desde el servidor y las guarda en 'allCitas'
+ */
 function cargarCitas() {
-    // Esta función no cambia en nada
+    const container = document.getElementById('agenda-container');
+    container.innerHTML = `
+        <div class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Cargando citas...</p>
+        </div>`;
+
     fetch('php/getCitas.php')
         .then(response => {
-            if (!response.ok) {
-                throw new Error('La respuesta de la red no fue exitosa');
-            }
+            if (!response.ok) throw new Error('Error de red');
             return response.json();
         })
         .then(citas => {
-            console.log(citas);
-            mostrarCitasEnHTML(citas);
+            allCitas = citas; // Guardamos la lista maestra
+            actualizarEstadisticas(allCitas); // Calculamos los contadores
+            aplicarFiltros(); // Mostramos las citas (con filtros por defecto)
         })
         .catch(error => {
             console.error('Error al cargar las citas:', error);
-            const container = document.getElementById('agenda-container');
-            container.innerHTML = "<p>Error al cargar la agenda. Intenta más tarde.</p>";
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Error al cargar las citas</h4>
+                    <p>Intenta más tarde</p>
+                </div>`;
         });
 }
 
-function mostrarCitasEnHTML(citas) {
+/**
+ * 2. Configura los 'listeners' para los filtros
+ */
+function configurarFiltros() {
+    document.getElementById('filter-estado').addEventListener('change', aplicarFiltros);
+    document.getElementById('filter-fecha').addEventListener('change', aplicarFiltros);
+    document.getElementById('search-citas').addEventListener('input', aplicarFiltros);
+}
+
+/**
+ * 3. Configura los 'listeners' para los botones de las tarjetas
+ * (Usamos delegación de eventos para que funcione con tarjetas nuevas)
+ */
+function configurarListenersDeAcciones() {
     const container = document.getElementById('agenda-container');
-    container.innerHTML = '';
+    
+    container.addEventListener('click', (event) => {
+        
+        // --- Lógica para Botón CANCELAR ---
+        const botonCancelar = event.target.closest('.btn-cancelar');
+        if (botonCancelar) {
+            event.preventDefault();
+            if (botonCancelar.classList.contains('btn-disabled')) return;
+            
+            const idCita = botonCancelar.dataset.id;
+            if (confirm(`¿Estás seguro de que quieres CANCELAR la cita ID: ${idCita}?`)) {
+                cancelarCita(idCita);
+            }
+        }
 
-    if (citas.length === 0) {
-        container.innerHTML = "<p>No hay citas programadas.</p>";
-        return;
-    }
+        // --- Lógica para Botón COMPLETAR ---
+        const botonCompletar = event.target.closest('.btn-completar');
+        if (botonCompletar) {
+            event.preventDefault();
+            if (botonCompletar.classList.contains('btn-disabled')) return;
 
-    citas.forEach(cita => {
-        // ⬇️ NUEVO (PARTE 2) ⬇️
-        // Verificamos si la cita ya está cancelada
-        const isCancelada = cita.estado_cita === 'Cancelada';
-
-        // Añadimos una clase CSS a la tarjeta si está cancelada
-        const cardClass = isCancelada ? 'cita-card card-cancelada' : 'cita-card';
-        // ⬆️ FIN DE NUEVO (PARTE 2) ⬆️
-
-        const citaHTML = `
-                        <div class="${cardClass}">
-                <h3>Cita ID: ${cita.id_cita}</h3>
-                <p><strong>Fecha:</strong> ${cita.fecha_hora}</p>
-                <p><strong>Cliente:</strong> ${cita.cliente_nombre} ${cita.cliente_apellido}</p>
-                <p><strong>Artista:</strong> ${cita.artista_nombre}</p>
-                <p><strong>Descripción:</strong> ${cita.tatuaje_descripcion}</p>
-                                <p><strong>Estado:</strong> <span class="estado-cita estado-${cita.estado_cita.toLowerCase()}">${cita.estado_cita}</span></p>
-                
-                <div class="card-actions">
-                    <a href="edit-cita.php?id=${cita.id_cita}" 
-                       class="btn-editar ${isCancelada ? 'btn-disabled' : ''}">
-                       Editar
-                    </a>
-                    
-                    <a href="#" 
-                       class="btn-cancelar ${isCancelada ? 'btn-disabled' : ''}" 
-                       data-id="${cita.id_cita}">
-                       Cancelar
-                    </a>
-                </div>
-                            </div>
-        `;
-        container.innerHTML += citaHTML;
+            const idCita = botonCompletar.dataset.id;
+            if (confirm(`¿Estás seguro de que quieres marcar como COMPLETADA la cita ID: ${idCita}?`)) {
+                completarCita(idCita);
+            }
+        }
     });
 }
 
+/**
+ * 4. El "Cerebro" de los filtros.
+ * Filtra el array 'allCitas', NO el DOM.
+ */
+function aplicarFiltros() {
+    // Obtenemos los valores de los filtros
+    const estadoFiltro = document.getElementById('filter-estado').value;
+    const fechaFiltro = document.getElementById('filter-fecha').value; // '2025-11-11'
+    const busqueda = document.getElementById('search-citas').value.toLowerCase();
 
-// ⬇️ NUEVO (PARTE 4) ⬇️
-// Esta función es llamada por el 'listener' de clic
+    // Filtramos el array 'allCitas'
+    const citasFiltradas = allCitas.filter(cita => {
+        // Filtro por estado
+        if (estadoFiltro !== 'todas' && cita.estado_cita.toLowerCase() !== estadoFiltro) {
+            return false;
+        }
+
+        // Filtro por fecha
+        const fechaCita = cita.fecha_hora.split(' ')[0]; // '2025-11-11'
+        if (fechaFiltro && fechaCita !== fechaFiltro) {
+            return false;
+        }
+
+        // Filtro por búsqueda
+        if (busqueda) {
+            const cliente = `${cita.cliente_nombre} ${cita.cliente_apellido}`.toLowerCase();
+            const artista = cita.artista_nombre.toLowerCase();
+            const descripcion = cita.tatuaje_descripcion.toLowerCase();
+
+            if (!cliente.includes(busqueda) && !artista.includes(busqueda) && !descripcion.includes(busqueda)) {
+                return false;
+            }
+        }
+
+        // Si pasó todos los filtros, la mostramos
+        return true;
+    });
+
+    // Enviamos la lista (ya filtrada) a "dibujar"
+    renderCitas(citasFiltradas);
+}
+
+/**
+ * 5. "Dibuja" las tarjetas en el HTML.
+ * @param {Array} citasAMostrar - La lista (ya filtrada) que se debe mostrar.
+ */
+function renderCitas(citasAMostrar) {
+    const container = document.getElementById('agenda-container');
+    container.innerHTML = ''; // Limpiamos el contenedor
+
+    if (citasAMostrar.length === 0) {
+        // Si no hay citas, mostramos el mensaje de "vacío"
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h4>No hay citas programadas</h4>
+                <p>No se encontraron citas con los filtros aplicados</p>
+            </div>
+        `;
+    } else {
+        // Si hay citas, creamos el HTML
+        let html = '';
+        citasAMostrar.forEach(cita => {
+            html += generarTarjetaCita(cita);
+        });
+        container.innerHTML = html;
+    }
+    
+    // Actualizamos el contador
+    document.getElementById('citas-count').textContent = `${citasAMostrar.length} citas encontradas`;
+}
+
+/**
+ * 6. Genera el HTML de una sola tarjeta (Tu función de diseño)
+ */
+function generarTarjetaCita(cita) {
+    const isCancelada = cita.estado_cita === 'Cancelada';
+    const isCompletada = cita.estado_cita === 'Completada';
+    const isFinalizada = isCancelada || isCompletada;
+    const estadoClass = getEstadoClass(cita.estado_cita);
+    const estadoText = cita.estado_cita;
+    const fechaRaw = cita.fecha_hora.split(' ')[0];
+    
+    // NOTA: Tu HTML de tarjeta (línea 127) tiene un error de sintaxis
+    // `class_name="btn-action...` debe ser `class="btn-action...`
+    // Lo he corregido aquí.
+    return `
+        <div class="cita-card ${estadoClass}" 
+             data-id="${cita.id_cita}" 
+             data-estado="${cita.estado_cita.toLowerCase()}"
+             data-fecha="${fechaRaw}" 
+        >
+            <div class="cita-id">#${cita.id_cita}</div>
+            <div class="cita-content">
+                <div class="cita-header">
+                    <h3 class="cita-cliente">${cita.cliente_nombre} ${cita.cliente_apellido}</h3>
+                </div>
+                
+                <div class="cita-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha</span>
+                        <span class="detail-value cita-fecha">
+                            <i class="fas fa-calendar"></i>
+                            ${formatearFecha(cita.fecha_hora)}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Artista</span>
+                        <span class="detail-value cita-artista">
+                            <i class="fas fa-user"></i>
+                            ${cita.artista_nombre}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Servicio</span>
+                        <span class="detail-value cita-descripcion">
+                            ${cita.tatuaje_descripcion || 'N/A'}
+                        </span>
+                    </div>
+                    ${cita.precio_total ? `
+                    <div class="detail-item">
+                        <span class="detail-label">Precio</span>
+                        <span class="detail-value cita-precio">
+                            <i class="fas fa-dollar-sign"></i>
+                            $${parseFloat(cita.precio_total).toFixed(2)}
+                        </span>
+                    </div>` : ''}
+                </div>
+
+                <div class="estado-cita ${estadoClass}">${estadoText}</div>
+                
+                <div class="card-actions">
+                    <a href="edit-cita.php?id=${cita.id_cita}" 
+                       class="btn-action btn-editar ${isFinalizada ? 'btn-disabled' : ''}">
+                       <i class="fas fa-edit"></i> Editar
+                    </a>
+                    
+                    ${!isFinalizada ? `
+                    <button class="btn-action btn-completar" data-id="${cita.id_cita}">
+                        <i class="fas fa-check"></i> Completar
+                    </button>
+                    ` : ''}
+                    
+                    <a href="#" 
+                       class="btn-action btn-cancelar ${isFinalizada ? 'btn-disabled' : ''}" 
+                       data-id="${cita.id_cita}">
+                       <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// --- FUNCIONES DE AYUDA (Helpers) ---
+
+function getEstadoClass(estado) {
+    const estados = {
+        'Pendiente': 'pendiente',
+        'Confirmada': 'confirmada', 
+        'Completada': 'completada',
+        'Cancelada': 'cancelada'
+    };
+    return estados[estado] || 'pendiente';
+}
+
+function formatearFecha(fecha) {
+    if (!fecha) return 'Fecha no especificada';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function actualizarEstadisticas(citas) {
+    const counts = { pendiente: 0, confirmada: 0, completada: 0, cancelada: 0 };
+    citas.forEach(cita => {
+        const estado = cita.estado_cita.toLowerCase();
+        if (counts.hasOwnProperty(estado)) {
+            counts[estado]++;
+        }
+    });
+    document.getElementById('count-pendientes').textContent = counts.pendiente;
+    document.getElementById('count-confirmadas').textContent = counts.confirmada;
+    document.getElementById('count-completadas').textContent = counts.completada;
+    document.getElementById('count-canceladas').textContent = counts.cancelada;
+}
+
+// --- FUNCIONES DE ACCIÓN (Llamadas al Backend) ---
+
 function cancelarCita(idCita) {
     console.log("Cancelando cita:", idCita);
-
-    // Usamos 'fetch' para enviar los datos por POST
     fetch('php/cancelarCita.php', {
         method: 'POST',
-        headers: {
-            // Decimos al servidor que estamos enviando datos de formulario
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `id_cita=${idCita}` // Enviamos el ID en el cuerpo
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `id_cita=${idCita}`
     })
-        .then(response => response.json()) // Esperamos una respuesta JSON
-        .then(data => {
-            if (data.success) {
-                // Si el PHP nos dice que fue un éxito
-                alert('¡Cita cancelada correctamente!');
-                cargarCitas(); // Volvemos a dibujar la agenda para ver el cambio
-            } else {
-                // Si el PHP nos da un error
-                alert('Error al cancelar la cita: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error en fetch:', error);
-            alert('Error de conexión. No se pudo cancelar la cita.');
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('¡Cita cancelada correctamente!');
+            cargarCitas(); // Recarga la lista maestra
+        } else {
+            alert('Error al cancelar la cita: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en fetch (cancelarCita):', error);
+        alert('Error de conexión.');
+    });
 }
-// ⬆️ FIN DE NUEVO (PARTE 4) ⬆️
+
+function completarCita(idCita) {
+    console.log('Completando cita:', idCita);
+    fetch('php/completarCita.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `id_cita=${idCita}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('¡Cita marcada como completada!');
+            cargarCitas(); // Recarga la lista maestra
+        } else {
+            alert('Error al completar la cita: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en fetch (completarCita):', error);
+        alert('Error de conexión.');
+    });
+}
