@@ -38,7 +38,7 @@
 
                     <ul class="menu_desplegable__menu">
                         <li>
-                            <a href="/index.html" class="menu_desplegable__link">
+                            <a href="/index.php" class="menu_desplegable__link">
                                 <i class="ri-home-line"></i></i>Inicio
                             </a>                          
                         </li>
@@ -143,7 +143,7 @@
                         <img src="img/Conocenos.jpg" alt="Imagen de conocenos">
                         <div class="team-info">
                             <h3>CONOCENOS</h3>
-                            <a class="button" href="nosotros.html">Ver mas</a>
+                            <a class="button" href="/nosotros.html">Ver mas</a>
                         </div>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
                         <img src="img/Cuidados1.jpg" alt="Imagen de conocenos">
                         <div class="team-info">
                             <h3>CUIDADOS</h3>
-                            <a class="button" href="cuidados.html">Ver mas</a>
+                            <a class="button" href="/cuidados.html">Ver mas</a>
                         </div>
                     </div>
                 </div>

@@ -343,7 +343,7 @@ html{
         height: 450px;
         background: 
             linear-gradient(0deg, rgb(17, 17, 17) 0%, rgba(255, 255, 255, 0) 100%), 
-            url(/img/Estilos-hero.jpg);
+            url(../img/Estilos-hero.jpg);
         margin-top: -160px;
         background-size: cover;
         background-repeat: no-repeat;
@@ -370,7 +370,7 @@ html{
         flex-direction: column;
         color: rgb(255, 255, 255);
         background-color: #111111; /* Fondo de color sólido */
-        background-image: url(/img/Brocha-oscura-bottom.png); /* Imagen de fondo */
+        background-image: url(../img/Brocha-oscura-bottom.png); /* Imagen de fondo */
         background-size: contain; /* Ajustar la imagen al ancho disponible */
         background-repeat: no-repeat; /* Evitar que la imagen se repita */
         background-position: bottom; /* Colocar la imagen en la parte inferior */
@@ -428,8 +428,8 @@ html{
         display: flex;
         justify-content: center;
         align-items: center;
-        background: url(/img/Fondo-Galeria.jpg);
-        animation: mover-fondo 10s linear infinite; /* Animación infinita */
+        background: url(../img/Fondo-Galeria.jpg);
+        animation: mover-fondo 10s linear infinite;
     }
 
     @keyframes mover-fondo {
