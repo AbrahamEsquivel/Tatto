@@ -1,6 +1,13 @@
 /* css/artistas.css */
 
 /* (Estilos copiados de tu historial-pagos.css para mantener la consistencia) */
+.admin-content {
+    margin-left: 160px;
+    padding: 30px;
+    box-sizing: border-box;
+    background-color: #0f0f0f;
+    min-height: 100vh;
+}
 
 .page-header {
     display: flex;

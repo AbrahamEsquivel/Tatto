@@ -73,12 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- OBJETO DE REGLAS DE VALIDACIÓN ---
 const reglas = {
     nombre: {
-        patron: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/, // Solo letras y espacios, 2-50 caracteres
-        mensaje: 'Solo letras (min 2, max 50).'
+        patron: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,20}$/, // Solo letras y espacios, 2-50 caracteres
+        mensaje: 'Solo letras (min 2, max 20).'
     },
     apellido: {
-        patron: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/,
-        mensaje: 'Solo letras (min 2, max 50).'
+        patron: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,20}$/,
+        mensaje: 'Solo letras (min 2, max 20).'
     },
     email: {
         patron: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Formato email estándar
