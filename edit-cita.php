@@ -49,10 +49,11 @@
     padding: 30px;
     background-color: #0f0f0f;
     min-height: 100vh;
+    margin-left: 200px;
 }
 
 .form-container {
-    max-width: 800px;
+    width: 1000px;
     margin: 0 auto;
     background: #1a1a1a;
     padding: 2.5rem;
