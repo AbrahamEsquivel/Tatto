@@ -46,6 +46,28 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Agenda tu Cita - B-INK tattoo</title>
     <style>
+
+        .input-error-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none; /* Oculto por defecto */
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Estilo para el input de fecha (icono blanco y deshabilitar escritura) */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1); /* Invierte el color a blanco (si el fondo es oscuro) */
+            cursor: pointer;
+        }
+
         .form-page-container { 
             padding-top: 100px; 
             padding-bottom: 50px; 
@@ -332,34 +354,45 @@
             <form id="form-crear-cita-cliente" action="php/crearCita.php" method="POST">
                 
                 <div class="form-section">
-                    <h3><i class="ri-user-line"></i> Tus Datos de Contacto</h3>
-                    <div class="form-group">
-                        <label for="cliente_nombre">Nombre(s):</label>
-                        <input type="text" id="cliente_nombre" name="cliente_nombre" required placeholder="Ingresa tu nombre">
-                    </div>
-                    <div class="form-group">
-                        <label for="cliente_apellido">Apellido(s):</label>
-                        <input type="text" id="cliente_apellido" name="cliente_apellido" required placeholder="Ingresa tus apellidos">
-                    </div>
-                    <div class="form-group">
-                        <label for="cliente_email">Email:</label>
-                        <input type="email" id="cliente_email" name="cliente_email" required placeholder="tu@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="cliente_telefono">Teléfono (Opcional, pero ayuda):</label>
-                        <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52 449 123 4567">
-                    </div>
-                </div>
+            <h3><i class="ri-user-line"></i> Tus Datos de Contacto</h3>
+            
+            <div class="form-group">
+                <label for="cliente_nombre">Nombre(s):</label>
+                <input type="text" id="cliente_nombre" name="cliente_nombre" required placeholder="Ingresa tu nombre">
+                <div class="input-error-message">El nombre solo debe contener letras y espacios (min 2 caracteres).</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cliente_apellido">Apellido(s):</label>
+                <input type="text" id="cliente_apellido" name="cliente_apellido" required placeholder="Ingresa tus apellidos">
+                <div class="input-error-message">El apellido solo debe contener letras y espacios (min 2 caracteres).</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cliente_email">Email:</label>
+                <input type="email" id="cliente_email" name="cliente_email" required placeholder="tu@email.com">
+                <div class="input-error-message">Ingresa un correo electrónico válido.</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cliente_telefono">Teléfono (Opcional, pero ayuda):</label>
+                <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52 449 123 4567">
+                <div class="input-error-message">Ingresa un número de teléfono válido (10 dígitos).</div>
+            </div>
+        </div>
 
                 <div class="form-divider"></div>
 
                 <div class="form-section">
                     <h3><i class="ri-palette-line"></i> Detalles de tu Idea</h3>
+                    
                     <div class="form-group">
                         <label for="fecha_hora_preferida">Fecha y Hora Preferida:</label>
-                        <input type="datetime-local" id="fecha_hora_preferida" name="fecha_hora" required>
+                        <input type="datetime-local" id="fecha_hora_preferida" name="fecha_hora" required onkeydown="return false">
                         <div id="time-validator-message" class="validator-message"></div>
                     </div>
+
+                </div>
 
                     <div class="form-group">
                         <label for="id_artista">Artista de Preferencia:</label>
