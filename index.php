@@ -38,7 +38,7 @@
 
                     <ul class="menu_desplegable__menu">
                         <li>
-                            <a href="/index.php" class="menu_desplegable__link">
+                            <a href="index.php" class="menu_desplegable__link">
                                 <i class="ri-home-line"></i></i>Inicio
                             </a>                          
                         </li>

@@ -2,6 +2,7 @@
     include 'admin_header.php'; 
     include 'php/conexion.php';
 
+    // Validar ID
     if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
         echo "<h1>Error: ID de cita no válido.</h1>";
         include 'admin_footer.php';
@@ -9,6 +10,7 @@
     }
     $id_cita_a_editar = $_GET['id'];
 
+    // Buscar datos de la cita
     $sql = "SELECT * FROM v_AgendaCompleta WHERE id_cita = ? LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id_cita_a_editar);
@@ -24,9 +26,11 @@
     $cita = $resultado->fetch_assoc();
     $stmt->close();
     
+    // Cargar catálogos
     $estados = $conexion->query("SELECT id, nombre FROM estado_cita ORDER BY nombre");
     $estilos_tatuaje = $conexion->query("SELECT id, nombre FROM estilo_tatuaje ORDER BY nombre");
 
+    // Cargar Artistas (Activos + el actual asignado)
     $id_artista_asignado = $cita['id_artista'];
     $sql_artistas = "
         (SELECT id, nombre_artistico FROM artista WHERE active = 1)
@@ -34,7 +38,6 @@
         (SELECT id, nombre_artistico FROM artista WHERE id = ?)
         ORDER BY nombre_artistico
     ";
-    
     $stmt_artistas = $conexion->prepare($sql_artistas);
     $stmt_artistas->bind_param("i", $id_artista_asignado);
     $stmt_artistas->execute();
@@ -49,7 +52,7 @@
     padding: 30px;
     background-color: #0f0f0f;
     min-height: 100vh;
-    margin-left: 200px;
+    margin-left: 200px; /* Ajusta según tu sidebar */
 }
 
 .form-container {
@@ -73,7 +76,7 @@
 
 .form-section {
     margin-bottom: 2.5rem;
-    padding: 4rem;
+    padding: 2rem;
     background: #111;
     border-radius: 12px;
     border: 1px solid #333;
@@ -87,11 +90,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.form-section h3 i {
-    color: #fff;
-    opacity: 0.8;
 }
 
 .form-group {
@@ -119,6 +117,12 @@
     transition: all 0.3s ease;
 }
 
+/* Estilo para el icono del calendario en blanco */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -127,23 +131,11 @@
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.form-group input:hover,
-.form-group textarea:hover,
-.form-group select:hover {
-    border-color: #555;
-}
-
 .form-group input:disabled {
     background: #1a1a1a;
     color: #888;
     border-color: #333;
     cursor: not-allowed;
-}
-
-.form-divider {
-    height: 1px;
-    background: #333;
-    margin: 2rem 0;
 }
 
 .btn {
@@ -169,6 +161,10 @@
     background: transparent;
     color: #fff;
     border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 }
 
 .btn-secondary:hover {
@@ -181,38 +177,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-top: 2rem;
-}
-
-@media (max-width: 768px) {
-    .admin-content {
-        padding: 20px 15px;
-    }
-    
-    .form-container {
-        padding: 2rem 1.5rem;
-    }
-    
-    .form-section {
-        padding: 1.5rem;
-    }
-    
-    .actions-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .form-container {
-        padding: 1.5rem 1rem;
-    }
-    
-    .form-section {
-        padding: 1rem;
-    }
-    
-    .form-container h1 {
-        font-size: 1.5rem;
-    }
 }
 </style>
 
@@ -240,7 +204,7 @@
                 <h3><i class="ri-calendar-line"></i> Detalles de la Cita</h3>
                 <div class="form-group">
                     <label for="fecha_hora">Fecha y Hora:</label>
-                    <input type="datetime-local" id="fecha_hora" name="fecha_hora" value="<?php echo str_replace(' ', 'T', $cita['fecha_hora']); ?>" required>
+                    <input type="datetime-local" id="fecha_hora" name="fecha_hora" value="<?php echo str_replace(' ', 'T', $cita['fecha_hora']); ?>" required onkeydown="return false">
                 </div>
                 <div class="form-group">
                     <label for="id_artista">Artista Asignado:</label>
@@ -277,10 +241,10 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="precio_total">Precio Total (MXN):</label>
-                    <input type="number" id="precio_total" name="precio_total" step="50" min="0" value="<?php echo htmlspecialchars($cita['precio_total']); ?>" placeholder="0">
+                    <label for="tatuaje_descripcion">Descripción:</label>
+                    <textarea id="tatuaje_descripcion" name="tatuaje_descripcion" rows="3" required><?php echo htmlspecialchars($cita['tatuaje_descripcion']); ?></textarea>
                 </div>
-            </div>
+                </div>
 
             <div class="actions-grid">
                 <button type="submit" class="btn">

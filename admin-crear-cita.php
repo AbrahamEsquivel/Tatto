@@ -1,10 +1,10 @@
 <?php 
     include 'admin_header.php'; // Incluye el menú y la seguridad
     
-    // --- BLOQUE DE CARGA DE DATOS (Igual que en agendar.php) ---
+    // --- BLOQUE DE CARGA DE DATOS ---
     include 'php/conexion.php';
     
-    // 1. Cargar Artistas (Solo activos)
+    // 1. Cargar Artistas
     $artistas_lista = [];
     $sql_artistas = "SELECT id, nombre_artistico FROM artista WHERE active = 1 ORDER BY nombre_artistico";
     $r_artistas = $conexion->query($sql_artistas);
@@ -32,6 +32,7 @@
 ?>
 
 <title>Registrar Cita (Presencial) - Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     .form-container-dark { 
@@ -56,6 +57,25 @@
         border-radius: 6px; box-sizing: border-box; background-color: #111;
         color: #fff; font-size: 1rem;
     }
+    
+    /* Estilo para el icono del calendario en blanco */
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+    
+    /* Estilos de Error de Validación */
+    .input-error-message {
+        color: #EF4444; /* Rojo */
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: none; /* Oculto por defecto */
+    }
+    .form-group.error input {
+        border-color: #EF4444;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
     .form-container-dark .form-group small { color: #888; font-size: 0.8em; }
     .form-container-dark .btn { 
         width: 100%; padding: 12px; background: #3B82F6; /* Azul */ 
@@ -63,6 +83,7 @@
         font-size: 1.1rem; font-weight: 500; transition: background-color 0.3s ease;
     }
     .form-container-dark .btn:hover { background: #2563EB; }
+    .form-container-dark .btn:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
 </style>
 
 <div class="form-container-dark">
@@ -75,19 +96,23 @@
         <div class="form-group">
             <label for="cliente_nombre">Nombre(s):</label>
             <input type="text" id="cliente_nombre" name="cliente_nombre" required>
+            <div class="input-error-message"></div>
         </div>
         <div class="form-group">
             <label for="cliente_apellido">Apellido(s):</label>
             <input type="text" id="cliente_apellido" name="cliente_apellido" required>
+            <div class="input-error-message"></div>
         </div>
         <div class="form-group">
             <label for="cliente_email">Email:</label>
             <input type="email" id="cliente_email" name="cliente_email" required>
-            <small> (Si el email ya existe, el sistema lo asociará al cliente existente)</small>
+            <div class="input-error-message"></div>
+            <small> (Si el email ya existe, se asociará al cliente existente)</small>
         </div>
          <div class="form-group">
             <label for="cliente_telefono">Teléfono:</label>
             <input type="tel" id="cliente_telefono" name="cliente_telefono">
+            <div class="input-error-message"></div>
         </div>
 
         <hr style="border-color: #333; margin: 20px 0;">
@@ -96,8 +121,7 @@
         
         <div class="form-group">
             <label for="fecha_hora">Fecha y Hora de la Cita:</label>
-            <input type="datetime-local" id="fecha_hora" name="fecha_hora" required>
-            <small>(No hay validación de horario. El admin es responsable de verificar.)</small>
+            <input type="datetime-local" id="fecha_hora" name="fecha_hora" required onkeydown="return false">
         </div>
         
         <div class="form-group">
@@ -151,9 +175,11 @@
             </select>
         </div>
 
-        <button type="submit" class="btn">Registrar Cita</button>
+        <button type="submit" id="btn-registrar" class="btn">Registrar Cita</button>
     </form>
 </div>
+
+<script src="js/admin-crear-cita.js"></script>
 
 <?php
     include 'admin_footer.php';

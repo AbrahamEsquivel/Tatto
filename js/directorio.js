@@ -175,9 +175,7 @@ function mostrarDirectorio(registros) {
                         <button class="btn-action btn-view" onclick="verDetalle('${persona.tipo_persona}', ${persona.id_persona})">
                             <i class="fas fa-eye"></i> Ver
                         </button>
-                        <button class="btn-action btn-edit" onclick="editarRegistro('${persona.tipo_persona}', ${persona.id_persona})">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
+                        
                     </td>
                 </tr>
             `;
