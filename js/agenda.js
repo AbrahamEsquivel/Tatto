@@ -306,23 +306,48 @@ function cancelarCita(idCita) {
 }
 
 function completarCita(idCita) {
-    console.log('Completando cita:', idCita);
+    // Usamos SweetAlert para confirmar
+    Swal.fire({
+        title: '¿Completar Cita?',
+        text: "Esto marcará el trabajo como finalizado. Asegúrate de haber registrado el pago.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, completar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            procesarCompletado(idCita);
+        }
+    });
+}
+
+function procesarCompletado(idCita) {
     fetch('php/completarCita.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `id_cita=${idCita}`
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('¡Cita marcada como completada!');
-            cargarCitas(); // Recarga la lista maestra
+            Swal.fire(
+                '¡Completada!',
+                'La cita ha sido marcada como completada.',
+                'success'
+            );
+            cargarCitas(); 
         } else {
-            alert('Error al completar la cita: ' + data.message);
+            Swal.fire(
+                'No se pudo completar',
+                data.message, 
+                'error'
+            );
         }
     })
     .catch(error => {
-        console.error('Error en fetch (completarCita):', error);
-        alert('Error de conexión.');
+        console.error('Error:', error);
+        Swal.fire('Error', 'Error de conexión.', 'error');
     });
 }

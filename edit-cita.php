@@ -183,6 +183,12 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 <div class="admin-content">
     <div class="form-container">
         <form id="form-editar-cita" action="php/updateCita.php" method="POST">
+            <?php if (isset($_GET['error'])): ?>
+            <div style="background: rgba(239,68,68,0.1); border: 1px solid #EF4444; color: #EF4444; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span><?php echo htmlspecialchars(urldecode($_GET['error'])); ?></span>
+            </div>
+        <?php endif; ?>
             <h1>Editando Cita #<?php echo htmlspecialchars($cita['id_cita']); ?></h1>
 
             <input type="hidden" name="id_cita" value="<?php echo $cita['id_cita']; ?>">
