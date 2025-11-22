@@ -171,13 +171,22 @@ function generarTarjetaCita(cita) {
     const isCancelada = cita.estado_cita === 'Cancelada';
     const isCompletada = cita.estado_cita === 'Completada';
     const isFinalizada = isCancelada || isCompletada;
+    
     const estadoClass = getEstadoClass(cita.estado_cita);
     const estadoText = cita.estado_cita;
     const fechaRaw = cita.fecha_hora.split(' ')[0];
+
+    // --- ⬇️ LÓGICA FINANCIERA ⬇️ ---
+    const precio = parseFloat(cita.precio_total) || 0;
+    const pagado = parseFloat(cita.total_pagado) || 0; // Ahora sí vendrá de la BD
+    const restante = precio - pagado;
+
+    // Color del texto de "Abonado"
+    let colorAbonado = '#9CA3AF'; // Gris
+    if (pagado >= precio && precio > 0) colorAbonado = '#22C55E'; // Verde (Pagado)
+    else if (pagado > 0) colorAbonado = '#EAB308'; // Amarillo (Abono parcial)
+    // --- ⬆️ FIN LÓGICA ⬆️ ---
     
-    // NOTA: Tu HTML de tarjeta (línea 127) tiene un error de sintaxis
-    // `class_name="btn-action...` debe ser `class="btn-action...`
-    // Lo he corregido aquí.
     return `
         <div class="cita-card ${estadoClass}" 
              data-id="${cita.id_cita}" 
@@ -188,56 +197,54 @@ function generarTarjetaCita(cita) {
             <div class="cita-content">
                 <div class="cita-header">
                     <h3 class="cita-cliente">${cita.cliente_nombre} ${cita.cliente_apellido}</h3>
+                    <div class="cita-fecha">
+                        <i class="fas fa-calendar"></i> ${formatearFecha(cita.fecha_hora)}
+                    </div>
                 </div>
-                
+
                 <div class="cita-details">
                     <div class="detail-item">
-                        <span class="detail-label">Fecha</span>
-                        <span class="detail-value cita-fecha">
-                            <i class="fas fa-calendar"></i>
-                            ${formatearFecha(cita.fecha_hora)}
-                        </span>
-                    </div>
-                    <div class="detail-item">
                         <span class="detail-label">Artista</span>
-                        <span class="detail-value cita-artista">
-                            <i class="fas fa-user"></i>
-                            ${cita.artista_nombre}
-                        </span>
+                        <span class="detail-value cita-artista"><i class="fas fa-user"></i> ${cita.artista_nombre}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Servicio</span>
-                        <span class="detail-value cita-descripcion">
-                            ${cita.tatuaje_descripcion || 'N/A'}
-                        </span>
+                        <span class="detail-value cita-descripcion">${cita.tatuaje_descripcion}</span>
                     </div>
-                    ${cita.precio_total ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Precio</span>
-                        <span class="detail-value cita-precio">
-                            <i class="fas fa-dollar-sign"></i>
-                            $${parseFloat(cita.precio_total).toFixed(2)}
-                        </span>
-                    </div>` : ''}
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px; background: #1a1a1a; padding: 8px; border-radius: 6px;">
+                        <div class="detail-item" style="flex: 1;">
+                            <span class="detail-label">Precio</span>
+                            <span class="detail-value" style="font-weight: bold; color: #fff;">
+                                ${precio > 0 ? `$${precio.toFixed(2)}` : 'N/A'}
+                            </span>
+                        </div>
+                        <div class="detail-item" style="flex: 1;">
+                            <span class="detail-label">Abonado</span>
+                            <span class="detail-value" style="font-weight: bold; color: ${colorAbonado};">
+                                $${pagado.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    ${(precio > 0 && restante > 0.01 && !isCancelada) ? `
+                    <div style="margin-top: 5px; font-size: 0.85em; color: #EF4444; text-align: right;">
+                        <i class="fas fa-exclamation-circle"></i> Restan: <strong>$${restante.toFixed(2)}</strong>
+                    </div>
+                    ` : ''}
                 </div>
 
                 <div class="estado-cita ${estadoClass}">${estadoText}</div>
                 
                 <div class="card-actions">
-                    <a href="edit-cita.php?id=${cita.id_cita}" 
-                       class="btn-action btn-editar ${isFinalizada ? 'btn-disabled' : ''}">
+                    <a href="edit-cita.php?id=${cita.id_cita}" class="btn-action btn-editar ${isFinalizada ? 'btn-disabled' : ''}">
                        <i class="fas fa-edit"></i> Editar
                     </a>
-                    
                     ${!isFinalizada ? `
                     <button class="btn-action btn-completar" data-id="${cita.id_cita}">
                         <i class="fas fa-check"></i> Completar
-                    </button>
-                    ` : ''}
-                    
-                    <a href="#" 
-                       class="btn-action btn-cancelar ${isFinalizada ? 'btn-disabled' : ''}" 
-                       data-id="${cita.id_cita}">
+                    </button>` : ''}
+                    <a href="#" class="btn-action btn-cancelar ${isFinalizada ? 'btn-disabled' : ''}" data-id="${cita.id_cita}">
                        <i class="fas fa-times"></i> Cancelar
                     </a>
                 </div>

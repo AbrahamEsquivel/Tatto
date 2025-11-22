@@ -3,7 +3,6 @@ session_start();
 include 'conexion.php'; 
 header('Content-Type: application/json');
 
-// 1. BÚNKER DE SEGURIDAD
 if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true) {
     echo json_encode(['success' => false, 'message' => 'No autorizado.']);
     exit;
@@ -15,45 +14,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_cita'])) {
     $id_estado_completada = 4; 
 
     try {
-        // --- ⬇️ VALIDACIÓN NUEVA: VERIFICAR PAGOS ⬇️ ---
-        // Buscamos si existe algún pago para esta cita que sea 'Liquidación' o 'Pago Completo'
-        // (Asumimos que 'Anticipo' NO cuenta para completar)
-        
-        // Primero, obtengamos los IDs de los tipos de pago válidos para completar
-        // (Liquidación o Pago Completo)
-        $sql_tipos = "SELECT id FROM tipo_pago WHERE nombre IN ('Liquidacion', 'Pago Completo')";
-        $res_tipos = $conexion->query($sql_tipos);
-        $ids_validos = [];
-        while($row = $res_tipos->fetch_assoc()) {
-            $ids_validos[] = $row['id'];
-        }
-        
-        if (empty($ids_validos)) {
-            // Si por alguna razón no encontró los tipos, usa lógica por defecto (ej. ID 2 y 3)
-             $ids_validos = [2, 3]; 
-        }
-        $ids_string = implode(',', $ids_validos);
+        // 1. Obtener el Precio Total Acordado
+        $sql_precio = "SELECT t.precio_total 
+                       FROM cita c 
+                       JOIN tatuaje t ON c.id_tatuaje = t.id 
+                       WHERE c.id = ?";
+        $stmt_precio = $conexion->prepare($sql_precio);
+        $stmt_precio->bind_param("i", $id_cita);
+        $stmt_precio->execute();
+        $res_precio = $stmt_precio->get_result()->fetch_assoc();
+        $precio_total = (float)$res_precio['precio_total'];
+        $stmt_precio->close();
 
-        // Ahora consultamos si hay pagos de esos tipos para esta cita
-        $sql_check = "SELECT COUNT(*) as total FROM pago WHERE id_cita = ? AND id_tipo_pago IN ($ids_string)";
-        $stmt_check = $conexion->prepare($sql_check);
-        $stmt_check->bind_param("i", $id_cita);
-        $stmt_check->execute();
-        $resultado_check = $stmt_check->get_result()->fetch_assoc();
-        $stmt_check->close();
+        if ($precio_total <= 0) {
+            echo json_encode(['success' => false, 'message' => 'No se puede completar: La cita no tiene un precio definido.']);
+            exit;
+        }
 
-        if ($resultado_check['total'] == 0) {
-            // ¡ERROR! No hay pago completo.
+        // 2. Obtener el Total Pagado
+        $sql_pagos = "SELECT IFNULL(SUM(monto), 0) as total_pagado FROM pago WHERE id_cita = ?";
+        $stmt_pagos = $conexion->prepare($sql_pagos);
+        $stmt_pagos->bind_param("i", $id_cita);
+        $stmt_pagos->execute();
+        $res_pagos = $stmt_pagos->get_result()->fetch_assoc();
+        $total_pagado = (float)$res_pagos['total_pagado'];
+        $stmt_pagos->close();
+
+        // 3. Validar Deuda
+        if ($total_pagado < $precio_total) {
+            $falta = $precio_total - $total_pagado;
             echo json_encode([
                 'success' => false, 
-                'message' => 'No se puede completar la cita. No se ha registrado un Pago Completo o Liquidación.'
+                'message' => "Falta pago. Se han cubierto $$total_pagado de $$precio_total. Restan $$falta."
             ]);
             exit;
         }
-        // --- ⬆️ FIN DE VALIDACIÓN ⬆️ ---
 
-
-        // 3. Si pasó la validación, ejecutamos el UPDATE
+        // 4. Si todo cuadra, Completar
         $sql = "UPDATE cita SET id_estado_cita = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("ii", $id_estado_completada, $id_cita);

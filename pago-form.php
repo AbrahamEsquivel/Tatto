@@ -6,44 +6,49 @@
     $id_pago = null;
     $monto = '';
     $is_readonly = '';
-    $fecha_pago = date('Y-m-d');
+    $fecha_pago = date('Y-m-d'); // Fecha de hoy por defecto
     $id_tipo_pago_sel = null;
     $id_metodo_pago_sel = null;
     $titulo_pagina = "Registrar Nuevo Pago";
+    $cita = null;
 
-    // 2. BUSCAR DATOS DE LA CITA
+    // 2. BUSCAR DATOS DE LA CITA (viene de ?id_cita=...)
     if (isset($_GET['id_cita'])) {
         $id_cita = (int)$_GET['id_cita'];
         
+        // Buscamos datos de la cita para mostrarlos
         $stmt_cita = $conexion->prepare("SELECT * FROM v_AgendaCompleta WHERE id_cita = ?");
         $stmt_cita->bind_param("i", $id_cita);
         $stmt_cita->execute();
         $cita = $stmt_cita->get_result()->fetch_assoc();
         $stmt_cita->close();
         
+        // Si nos pasan un monto desde la URL, lo usamos como SUGERENCIA
         if (isset($_GET['monto']) && !empty($_GET['monto'])) {
             $monto = (float)$_GET['monto'];
-            $is_readonly = 'readonly';
         }
         
     } 
-    // 3. BUSCAR DATOS DEL PAGO (MODO "EDITAR")
+    // 3. BUSCAR DATOS DEL PAGO (MODO "EDITAR") (viene de ?id_pago=...)
     else if (isset($_GET['id_pago'])) {
         $id_pago = (int)$_GET['id_pago'];
         $titulo_pagina = "Editar Pago #$id_pago";
 
+        // Buscamos el pago existente
         $stmt_pago = $conexion->prepare("SELECT * FROM pago WHERE id = ?");
         $stmt_pago->bind_param("i", $id_pago);
         $stmt_pago->execute();
         $pago_existente = $stmt_pago->get_result()->fetch_assoc();
         $stmt_pago->close();
 
+        // Rellenamos las variables con los datos de la BD
         $id_cita = $pago_existente['id_cita'];
         $monto = $pago_existente['monto'];
         $fecha_pago = $pago_existente['fecha_pago'];
         $id_tipo_pago_sel = $pago_existente['id_tipo_pago'];
         $id_metodo_pago_sel = $pago_existente['id_metodo_pago'];
 
+        // Buscamos los datos de la cita (igual que antes)
         $stmt_cita = $conexion->prepare("SELECT * FROM v_AgendaCompleta WHERE id_cita = ?");
         $stmt_cita->bind_param("i", $id_cita);
         $stmt_cita->execute();
@@ -52,6 +57,13 @@
 
     } else {
         echo "<h1>Error: No se especificó una cita o un pago.</h1>";
+        include 'admin_footer.php';
+        exit;
+    }
+
+    // Seguridad extra
+    if (!$cita) {
+        echo "<h1>Error: La cita asociada no existe.</h1>";
         include 'admin_footer.php';
         exit;
     }
@@ -114,6 +126,10 @@
     margin: 8px 0;
     color: #e0e0e0;
     font-size: 0.95rem;
+    /* Ajustes para texto largo */
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .cita-info-box strong {
@@ -158,16 +174,17 @@
     transition: all 0.3s ease;
 }
 
+/* ⬇️ NUEVO: ESTILO PARA EL CALENDARIO BLANCO ⬇️ */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: #fff;
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
-}
-
-.form-group input:hover,
-.form-group select:hover {
-    border-color: #555;
 }
 
 .form-group input:disabled {
@@ -177,10 +194,11 @@
     cursor: not-allowed;
 }
 
+/* Input de solo lectura (como el monto si estuviera bloqueado) */
 .form-group input[readonly] {
     background: #1a1a1a;
-    color: #888;
-    border-color: #333;
+    color: #e0e0e0; /* Mantenemos color normal aunque sea readonly */
+    border-color: #444;
 }
 
 .btn {
@@ -211,32 +229,23 @@
     margin: 2rem 0;
 }
 
-@media (max-width: 768px) {
-    .admin-content {
-        padding: 20px 15px;
-    }
-    
-    .form-container {
-        padding: 2rem 1.5rem;
-    }
-    
-    .cita-info-box {
-        padding: 1.25rem;
-    }
+/* Bloque de error */
+.error-box {
+    background: rgba(239,68,68,0.1); 
+    border: 1px solid #EF4444; 
+    color: #EF4444; 
+    padding: 15px; 
+    border-radius: 6px; 
+    margin-bottom: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    font-weight: 500;
 }
 
-@media (max-width: 480px) {
-    .form-container {
-        padding: 1.5rem 1rem;
-    }
-    
-    .form-container h1 {
-        font-size: 1.5rem;
-    }
-    
-    .cita-info-box {
-        padding: 1rem;
-    }
+@media (max-width: 768px) {
+    .admin-content { padding: 20px 15px; }
+    .form-container { padding: 2rem 1.5rem; }
 }
 </style>
 
@@ -245,23 +254,38 @@
         <form id="form-pago" action="php/guardarPago.php" method="POST">
             <h1><?php echo $titulo_pagina; ?></h1>
 
+            <?php if (isset($_GET['error'])): ?>
+                <div class="error-box">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span><?php echo htmlspecialchars(urldecode($_GET['error'])); ?></span>
+                </div>
+            <?php endif; ?>
+
             <input type="hidden" name="id_cita" value="<?php echo $id_cita; ?>">
             <?php if ($id_pago): ?>
                 <input type="hidden" name="id_pago" value="<?php echo $id_pago; ?>">
             <?php endif; ?>
 
             <div class="cita-info-box">
-                <h3><i class="ri-calendar-line"></i> Cita Asociada</h3>
+                <h3><i class="fas fa-calendar-alt"></i> Cita Asociada</h3>
                 <p><strong>Cita ID:</strong> <?php echo $cita['id_cita']; ?></p>
                 <p><strong>Cliente:</strong> <?php echo $cita['cliente_nombre'] . ' ' . $cita['cliente_apellido']; ?></p>
-                <p><strong>Tatuaje:</strong> <?php echo htmlspecialchars($cita['tatuaje_descripcion']); ?></p>
+                
+                <p>
+                    <strong>Tatuaje:</strong> 
+                    <?php 
+                        $desc = $cita['tatuaje_descripcion'];
+                        echo htmlspecialchars(strlen($desc) > 100 ? substr($desc, 0, 100) . '...' : $desc); 
+                    ?>
+                </p>
+
                 <p><strong>Precio Total:</strong> $<?php echo number_format($cita['precio_total'], 2); ?></p>
             </div>
 
             <div class="form-divider"></div>
 
             <div class="form-section">
-                <h3><i class="ri-money-dollar-circle-line"></i> Detalles del Pago</h3>
+                <h3><i class="fas fa-money-bill-wave"></i> Detalles del Pago</h3>
                 
                 <div class="form-group">
                     <label for="monto">Monto (MXN):</label>
@@ -270,7 +294,11 @@
 
                 <div class="form-group">
                     <label for="fecha_pago">Fecha del Pago:</label>
-                    <input type="date" id="fecha_pago" name="fecha_pago" value="<?php echo $fecha_pago; ?>" required>
+                    <input type="date" id="fecha_pago" name="fecha_pago" 
+                           value="<?php echo $fecha_pago; ?>" 
+                           min="<?php echo date('Y-m-d'); ?>"
+                           required 
+                           onkeydown="return false">
                 </div>
 
                 <div class="form-group">
@@ -299,7 +327,7 @@
             </div>
 
             <button type="submit" class="btn">
-                <i class="ri-save-line"></i> Guardar Pago
+                <i class="fas fa-save"></i> Guardar Pago
             </button>
         </form>
     </div>

@@ -1,6 +1,9 @@
 <?php
 session_start();
+// PASO 1: ASEGÚRATE DE QUE ESTA RUTA ES CORRECTA.
 include 'conexion.php';
+
+// PASO 2: Header JSON
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true) {
@@ -17,15 +20,28 @@ $dashboardData = [
 try {
 
     // ----- CONSULTA 1: TARJETAS (KPIs) -----
-    // (Esta consulta está bien, no cambia)
+    // Ahora calculamos todo basándonos en la realidad de la tabla PAGO
     $sql_kpi = "SELECT
-        SUM(CASE WHEN estado_cita = 'Completada' THEN precio_total ELSE 0 END) AS total_ingresos,
-        COUNT(CASE WHEN estado_cita = 'Pendiente' THEN 1 ELSE NULL END) AS total_pendientes,
-        AVG(CASE WHEN estado_cita = 'Completada' AND precio_total > 0 THEN precio_total ELSE NULL END) AS promedio_precio,
-        COUNT(id_cita) AS total_citas
-    FROM v_AgendaCompleta";
+        -- 1. Ingresos Totales: Suma real de la tabla 'pago'
+        (SELECT IFNULL(SUM(monto), 0) FROM pago) AS total_ingresos,
+        
+        -- 2. Citas Pendientes (Desde la vista)
+        (SELECT COUNT(*) FROM v_AgendaCompleta WHERE estado_cita = 'Pendiente') AS total_pendientes,
+        
+        -- 3. Total Citas Registradas
+        (SELECT COUNT(*) FROM v_AgendaCompleta) AS total_citas,
+
+        -- 4. Precio Promedio Real: (Total Ingresos / Total Citas Completadas)
+        (
+            SELECT 
+                IFNULL(SUM(monto), 0) / NULLIF((SELECT COUNT(*) FROM v_AgendaCompleta WHERE estado_cita = 'Completada'), 0)
+            FROM pago
+            -- Solo sumamos pagos de citas que ya se completaron para el promedio sea real
+            WHERE id_cita IN (SELECT id_cita FROM v_AgendaCompleta WHERE estado_cita = 'Completada')
+        ) AS promedio_precio";
 
     $resultado_kpi = $conexion->query($sql_kpi);
+    
     if ($resultado_kpi) {
         $data_kpi = $resultado_kpi->fetch_assoc();
         $dashboardData['kpis'] = [
@@ -38,31 +54,38 @@ try {
         throw new Exception("Error en consulta KPI: " . $conexion->error);
     }
 
-    // ----- CONSULTA 2: REPORTE DE ARTISTAS (CORREGIDA SIN GROUPING) -----
-    // ⬇️ ESTA ES LA CONSULTA CORREGIDA (PLAN C) ⬇️
+    // ----- CONSULTA 2: REPORTE DE ARTISTAS (SÚPER MEJORADA) -----
+    // Ahora unimos la vista con la tabla de PAGO para sumar dinero real
     $sql_reporte = "
         SELECT * FROM (
-            -- Consulta Interna: Hace el ROLLUP y el HAVING
             SELECT
-                artista_nombre,
+                v.artista_nombre,
                 
-                -- Plan C: Creamos 'es_total_general' manualmente
-                -- Si el nombre es NULL, es la fila total (ponemos 1), si no, es 0.
+                -- Detectar fila de Total
                 CASE 
-                    WHEN artista_nombre IS NULL THEN 1
+                    WHEN v.artista_nombre IS NULL THEN 1
                     ELSE 0 
                 END AS es_total_general,
                 
-                SUM(precio_total) AS ingresos_generados,
-                COUNT(id_cita) AS citas_completadas
-            FROM v_AgendaCompleta
-            WHERE estado_cita = 'Completada'
-            GROUP BY artista_nombre WITH ROLLUP
-            HAVING SUM(precio_total) > 0
+                -- Sumar los montos de la tabla PAGO
+                IFNULL(SUM(p.monto), 0) AS ingresos_generados,
+                
+                -- Contar citas únicas (DISTINCT es clave porque una cita puede tener 2 pagos)
+                COUNT(DISTINCT v.id_cita) AS citas_completadas
+            
+            FROM v_AgendaCompleta v
+            -- Unimos con pagos (LEFT JOIN para contar citas aunque no tengan pago aun)
+            LEFT JOIN pago p ON v.id_cita = p.id_cita
+            
+            WHERE v.estado_cita = 'Completada'
+            
+            GROUP BY v.artista_nombre WITH ROLLUP
+            
+            -- Filtro HAVING: Solo mostrar si hay dinero o citas
+            HAVING ingresos_generados > 0 OR citas_completadas > 0
+            
         ) AS reporte_con_rollup
-        -- Consulta Externa: Ordena por nuestra columna 'es_total_general'
         ORDER BY es_total_general ASC, ingresos_generados DESC";
-    // ⬆️ FIN DE LA CONSULTA CORREGIDA ⬆️
 
     $resultado_reporte = $conexion->query($sql_reporte);
     if ($resultado_reporte) {
@@ -74,7 +97,6 @@ try {
     }
 
     // ----- CONSULTA 3: BITÁCORA -----
-    // (Esta consulta está bien, no cambia)
     $sql_log = "SELECT id_cita, mensaje, fecha_envio 
                 FROM log_notificaciones 
                 ORDER BY fecha_envio DESC 
@@ -92,7 +114,7 @@ try {
     $dashboardData['success'] = true;
     echo json_encode($dashboardData);
 
-} catch (Exception $e) { // Atrapa el primer error que ocurra
+} catch (Exception $e) { 
     echo json_encode(['success' => false, 'message' => 'Error de SQL: ' . $e->getMessage()]);
 }
 

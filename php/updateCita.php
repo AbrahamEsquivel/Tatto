@@ -18,33 +18,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $tatuaje_descripcion = trim($_POST['tatuaje_descripcion']);
     $id_estilo = (int)$_POST['id_estilo'];
+    $id_parte_cuerpo = (int)$_POST['id_parte_cuerpo']; // ⬅️ Recibimos el dato
+    
+    $precio_total = empty(trim($_POST['precio_total'])) ? 0 : (float)$_POST['precio_total'];
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
     try {
         $conexion->begin_transaction();
 
-        // 1. Actualizar Tatuaje
-        $sql1 = "UPDATE tatuaje SET descripcion = ?, id_estilo = ? WHERE id = ?";
+        // 1. Actualizar Tatuaje (AGREGAMOS id_parte_cuerpo)
+        $sql1 = "UPDATE tatuaje SET 
+                    descripcion = ?, 
+                    id_estilo = ?, 
+                    id_parte_cuerpo = ?, 
+                    precio_total = ? 
+                 WHERE id = ?";
+        
         $stmt1 = $conexion->prepare($sql1);
-        $stmt1->bind_param("sii", $tatuaje_descripcion, $id_estilo, $id_tatuaje);
+        
+        // Tipos: s (string), i (int), i (int), d (double), i (int)
+        $stmt1->bind_param("siidi", 
+            $tatuaje_descripcion, 
+            $id_estilo,
+            $id_parte_cuerpo, // ⬅️ Lo guardamos aquí
+            $precio_total,
+            $id_tatuaje
+        );
+        
         $stmt1->execute();
         $stmt1->close();
 
-        // 2. Validación de Pago (Si intentan marcar como Completada)
-        if ($id_estado_cita == 4) {
-             $sql_check = "SELECT COUNT(*) as total FROM pago 
-                           WHERE id_cita = ? 
-                           AND id_tipo_pago IN (SELECT id FROM tipo_pago WHERE nombre IN ('Liquidacion', 'Pago Completo'))";
-             $stmt_check = $conexion->prepare($sql_check);
-             $stmt_check->bind_param("i", $id_cita);
-             $stmt_check->execute();
-             $res_check = $stmt_check->get_result()->fetch_assoc();
-             $stmt_check->close();
+        // 2. Validación de Pago
+        if ($id_estado_cita == 4) { 
+             if ($precio_total <= 0) {
+                 throw new Exception("No puedes completar una cita que no tiene precio definido ($0).");
+             }
+             $sql_pagos = "SELECT IFNULL(SUM(monto), 0) as total_pagado FROM pago WHERE id_cita = ?";
+             $stmt_pagos = $conexion->prepare($sql_pagos);
+             $stmt_pagos->bind_param("i", $id_cita);
+             $stmt_pagos->execute();
+             $res_pagos = $stmt_pagos->get_result()->fetch_assoc();
+             $total_pagado = (float)$res_pagos['total_pagado'];
+             $stmt_pagos->close();
 
-             if ($res_check['total'] == 0) {
-                 // Lanzamos el error voluntariamente
-                 throw new Exception("No puedes marcar como Completada sin un Pago Completo o Liquidación registrado.");
+             if ($total_pagado < ($precio_total - 0.01)) {
+                 $falta = $precio_total - $total_pagado;
+                 throw new Exception("Deuda pendiente: El cliente ha pagado $$total_pagado de $$precio_total. Faltan $$falta.");
              }
         }
         
@@ -60,13 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
 
     } catch (Exception $e) { 
-        // ⬇️ CAMBIO AQUÍ: Usamos 'Exception' genérico para atrapar TODO
         $conexion->rollback();
-        
-        // Codificamos el mensaje para pasarlo por la URL
         $error_msg = urlencode($e->getMessage());
-        
-        // Redirigimos de vuelta al formulario con el error
         header('Location: ../edit-cita.php?id=' . $id_cita . '&error=' . $error_msg);
         exit;
     }

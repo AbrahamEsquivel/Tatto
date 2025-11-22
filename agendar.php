@@ -2,7 +2,7 @@
     session_start();
     include 'php/conexion.php';
     
-    // Cargar datos para los dropdowns (mantengo tu código original)
+    // 1. Cargar Artistas
     $artistas_lista = [];
     $sql_artistas = "SELECT id, nombre_artistico FROM artista WHERE active = 1 ORDER BY nombre_artistico";
     $resultado_artistas = $conexion->query($sql_artistas);
@@ -12,6 +12,7 @@
         }
     }
 
+    // 2. Cargar Estilos
     $estilos_lista = [];
     $sql_estilos = "SELECT id, nombre FROM estilo_tatuaje ORDER BY nombre";
     $resultado_estilos = $conexion->query($sql_estilos);
@@ -21,6 +22,7 @@
         }
     }
     
+    // 3. Cargar Partes del Cuerpo
     $partes_lista = [];
     $sql_partes = "SELECT id, nombre FROM parte_cuerpo ORDER BY nombre";
     $resultado_partes = $conexion->query($sql_partes);
@@ -46,7 +48,7 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Agenda tu Cita - B-INK tattoo</title>
     <style>
-
+        /* --- ESTILOS DE VALIDACIÓN (ROJOS) --- */
         .input-error-message {
             color: #ff6b6b;
             font-size: 0.85rem;
@@ -61,14 +63,14 @@
             box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
 
-        /* Estilo para el input de fecha (icono blanco y deshabilitar escritura) */
+        /* --- ESTILO DEL CALENDARIO (ICONO BLANCO) --- */
         input[type="date"]::-webkit-calendar-picker-indicator,
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-            filter: invert(1); /* Invierte el color a blanco (si el fondo es oscuro) */
+            filter: invert(1); 
             cursor: pointer;
         }
 
-
+        /* --- ESTILOS DEL FORMULARIO MODERNO --- */
         .form-page-container { 
             padding-top: 100px; 
             padding-bottom: 50px; 
@@ -92,9 +94,7 @@
         .form-container::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 4px;
             background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
             background-size: 400% 400%;
@@ -108,110 +108,66 @@
         }
         
         .form-container h1 { 
-            text-align: center; 
-            margin-bottom: 1.5rem; 
-            color: #fff; 
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 1px;
+            text-align: center; margin-bottom: 1.5rem; color: #fff; 
+            font-size: 2.5rem; font-weight: 300; letter-spacing: 1px;
         }
         
         .form-container .intro-text {
-            text-align: center; 
-            margin-bottom: 2.5rem; 
-            color: #b0b0b0;
-            font-size: 1.1rem;
-            line-height: 1.6;
+            text-align: center; margin-bottom: 2.5rem; color: #b0b0b0;
+            font-size: 1.1rem; line-height: 1.6;
         }
         
         .form-section {
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: #111;
-            border-radius: 12px;
-            border: 1px solid #333;
+            margin-bottom: 2.5rem; padding: 2rem; background: #111;
+            border-radius: 12px; border: 1px solid #333;
         }
         
         .form-section h3 {
-            color: #fff;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #fff; margin-bottom: 1.5rem; font-size: 1.4rem;
+            font-weight: 400; display: flex; align-items: center; gap: 10px;
         }
         
-        .form-section h3 i {
-            color: #4ecdc4;
-        }
+        .form-section h3 i { color: #4ecdc4; }
         
-        .form-group { 
-            margin-bottom: 1.5rem; 
-        }
+        .form-group { margin-bottom: 1.5rem; }
         
         .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: 500; 
-            color: #fff;
-            font-size: 0.95rem;
+            display: block; margin-bottom: 8px; font-weight: 500; 
+            color: #fff; font-size: 0.95rem;
         }
         
         .form-group input,
         .form-group textarea,
         .form-group select { 
-            width: 100%; 
-            padding: 12px 16px; 
-            background: #0f0f0f;
-            border: 1px solid #333; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            color: #e0e0e0;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px 16px; background: #0f0f0f;
+            border: 1px solid #333; border-radius: 8px; box-sizing: border-box; 
+            color: #e0e0e0; font-size: 1rem; transition: all 0.3s ease;
         }
         
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus { 
-            outline: none;
-            border-color: #4ecdc4;
+            outline: none; border-color: #4ecdc4;
             box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
         }
         
         .form-group input:hover,
         .form-group textarea:hover,
-        .form-group select:hover {
-            border-color: #555;
-        }
+        .form-group select:hover { border-color: #555; }
         
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-            font-family: inherit;
-        }
+        .form-group textarea { resize: vertical; min-height: 100px; font-family: inherit; }
         
         .form-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #333, transparent);
+            height: 1px; background: linear-gradient(90deg, transparent, #333, transparent);
             margin: 2rem 0;
         }
         
         .btn { 
-            width: 100%; 
-            padding: 15px; 
+            width: 100%; padding: 15px; 
             background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 1.1rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            color: white; border: none; border-radius: 8px; cursor: pointer; 
+            font-size: 1.1rem; font-weight: 500; letter-spacing: 0.5px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
         
         .btn:hover { 
@@ -220,75 +176,37 @@
             box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
         }
         
-        .btn:active {
-            transform: translateY(0);
-        }
+        .btn:active { transform: translateY(0); }
         
         #btn-submit-cita:disabled { 
-            background: #666; 
-            cursor: not-allowed; 
-            opacity: 0.7;
-            transform: none;
-            box-shadow: none;
+            background: #666; cursor: not-allowed; opacity: 0.7;
+            transform: none; box-shadow: none;
         }
         
         .validator-message { 
-            font-size: 0.9em; 
-            font-weight: bold; 
-            padding-top: 8px; 
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.9em; font-weight: bold; padding-top: 8px; 
+            display: flex; align-items: center; gap: 8px;
         }
-        
         .validator-message.success { color: #4ecdc4; }
         .validator-message.error { color: #ff6b6b; }
         .validator-message.loading { color: #feca57; }
         
-        /* Estilos para selects con iconos */
-        .select-wrapper {
-            position: relative;
-        }
-        
+        .select-wrapper { position: relative; }
         .select-wrapper::after {
-            content: '▼';
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            pointer-events: none;
-            font-size: 0.8rem;
+            content: '▼'; position: absolute; right: 15px; top: 50%;
+            transform: translateY(-50%); color: #888; pointer-events: none; font-size: 0.8rem;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .form-container {
-                margin: 10px;
-                padding: 2rem 1.5rem;
-            }
-            
-            .form-section {
-                padding: 1.5rem;
-            }
-            
-            .form-container h1 {
-                font-size: 2rem;
-            }
+            .form-container { margin: 10px; padding: 2rem 1.5rem; }
+            .form-section { padding: 1.5rem; }
+            .form-container h1 { font-size: 2rem; }
         }
-        
         @media (max-width: 480px) {
-            .form-container {
-                padding: 1.5rem 1rem;
-            }
-            
-            .form-section {
-                padding: 1rem;
-            }
-            
-            .form-container h1 {
-                font-size: 1.8rem;
-            }
+            .form-container { padding: 1.5rem 1rem; }
+            .form-section { padding: 1rem; }
+            .form-container h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -352,48 +270,46 @@
                 Completa este formulario para enviarnos tu solicitud. Nos pondremos en contacto contigo a la brevedad para confirmar y afinar detalles.
             </p>
 
-            <form id="form-crear-cita-cliente" action="php/crearCita.php" method="POST">
+            <form id="form-crear-cita-cliente" action="php/crearCita.php" method="POST" enctype="multipart/form-data">
                 
                 <div class="form-section">
-                <h3><i class="ri-user-line"></i> Tus Datos de Contacto</h3>
-                
-                <div class="form-group">
-                    <label for="cliente_nombre">Nombre(s):</label>
-                    <input type="text" id="cliente_nombre" name="cliente_nombre" required placeholder="Ingresa tu nombre">
-                    <div class="input-error-message">El nombre solo debe contener letras y espacios (min 2 caracteres).</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="cliente_apellido">Apellido(s):</label>
-                    <input type="text" id="cliente_apellido" name="cliente_apellido" required placeholder="Ingresa tus apellidos">
-                    <div class="input-error-message">El apellido solo debe contener letras y espacios (min 2 caracteres).</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="cliente_email">Email:</label>
-                    <input type="email" id="cliente_email" name="cliente_email" required placeholder="tu@email.com">
-                    <div class="input-error-message">Ingresa un correo electrónico válido.</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="cliente_telefono">Teléfono (Opcional, pero ayuda):</label>
-                    <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52 449 123 4567">
-                    <div class="input-error-message">Ingresa un número de teléfono válido (10 dígitos).</div>
-                </div>
-            </div>
-
-            <div class="form-divider"></div>
-
-            <div class="form-section">
-                <h3><i class="ri-palette-line"></i> Detalles de tu Idea</h3>
-                
-                <div class="form-group">
-                    <label for="fecha_hora_preferida">Fecha y Hora Preferida:</label>
-                    <input type="datetime-local" id="fecha_hora_preferida" name="fecha_hora" required onkeydown="return false">
-                    <div id="time-validator-message" class="validator-message"></div>
+                    <h3><i class="ri-user-line"></i> Tus Datos de Contacto</h3>
+                    
+                    <div class="form-group">
+                        <label for="cliente_nombre">Nombre(s):</label>
+                        <input type="text" id="cliente_nombre" name="cliente_nombre" required placeholder="Ingresa tu nombre">
+                        <div class="input-error-message">El nombre solo debe contener letras y espacios (min 2 caracteres).</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cliente_apellido">Apellido(s):</label>
+                        <input type="text" id="cliente_apellido" name="cliente_apellido" required placeholder="Ingresa tus apellidos">
+                        <div class="input-error-message">El apellido solo debe contener letras y espacios (min 2 caracteres).</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cliente_email">Email:</label>
+                        <input type="email" id="cliente_email" name="cliente_email" required placeholder="tu@email.com">
+                        <div class="input-error-message">Ingresa un correo electrónico válido.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cliente_telefono">Teléfono (Opcional, pero ayuda):</label>
+                        <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52 449 123 4567">
+                        <div class="input-error-message">Ingresa un número de teléfono válido (10 dígitos).</div>
+                    </div>
                 </div>
 
-                </div>
+                <div class="form-divider"></div>
+
+                <div class="form-section">
+                    <h3><i class="ri-palette-line"></i> Detalles de tu Idea</h3>
+                    
+                    <div class="form-group">
+                        <label for="fecha_hora_preferida">Fecha y Hora Preferida:</label>
+                        <input type="datetime-local" id="fecha_hora_preferida" name="fecha_hora" required onkeydown="return false">
+                        <div id="time-validator-message" class="validator-message"></div>
+                    </div>
 
                     <div class="form-group">
                         <label for="id_artista">Artista de Preferencia:</label>
@@ -412,6 +328,12 @@
                     <div class="form-group">
                         <label for="tatuaje_descripcion">Descripción de tu Tatuaje:</label>
                         <textarea id="tatuaje_descripcion" name="tatuaje_descripcion" rows="4" placeholder="Ej: Un león realista en el brazo, tamaño 15cm, con detalles en negro y grises..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imagen_referencia">Imagen de Referencia (Opcional):</label>
+                        <input type="file" id="imagen_referencia" name="imagen_referencia" accept="image/*">
+                        <small style="color: #888;">Formatos: JPG, PNG, JPEG. Máx 5MB.</small>
                     </div>
                     
                     <div class="form-group">
@@ -441,9 +363,10 @@
                             </select>
                         </div>
                     </div>
+
                     <button type="submit" id="btn-submit-cita" class="btn">
-                    <i class="ri-send-plane-line"></i> Enviar Solicitud de Cita
-                </button>
+                        <i class="ri-send-plane-line"></i> Enviar Solicitud de Cita
+                    </button>
                 </div>
             </form>
         </div>
@@ -478,6 +401,7 @@
     <script src="js/main.js"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script> AOS.init(); </script>
+    
     <script src="js/agendar.js"></script>
 
 </body>

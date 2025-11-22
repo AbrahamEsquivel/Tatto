@@ -3,7 +3,6 @@
 ?>
 <title>Historial de Pagos - Admin</title>
 
-<!-- Incluir CSS específico para historial de pagos -->
 <link rel="stylesheet" href="css/historial-pagos.css">
 
 <div class="admin-content">
@@ -14,32 +13,23 @@
         </div>
     </div>
 
-    <!-- Estadísticas rápidas -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon total">
-                <i class="fas fa-chart-line"></i>
-            </div>
+            <div class="stat-icon total"><i class="fas fa-chart-line"></i></div>
             <div class="stat-info">
                 <span class="stat-number" id="total-ingresos">$0.00</span>
                 <span class="stat-label">Ingresos Totales</span>
             </div>
         </div>
-        
         <div class="stat-card">
-            <div class="stat-icon count">
-                <i class="fas fa-receipt"></i>
-            </div>
+            <div class="stat-icon count"><i class="fas fa-receipt"></i></div>
             <div class="stat-info">
                 <span class="stat-number" id="total-pagos">0</span>
                 <span class="stat-label">Total de Pagos</span>
             </div>
         </div>
-        
         <div class="stat-card">
-            <div class="stat-icon promedio">
-                <i class="fas fa-calculator"></i>
-            </div>
+            <div class="stat-icon promedio"><i class="fas fa-calculator"></i></div>
             <div class="stat-info">
                 <span class="stat-number" id="promedio-pago">$0.00</span>
                 <span class="stat-label">Promedio por Pago</span>
@@ -47,8 +37,8 @@
         </div>
     </div>
 
-    <!-- Filtros y búsqueda -->
     <div class="filters-section">
+        
         <div class="filter-group">
             <label for="filter-fecha"><i class="fas fa-calendar"></i> Rango de Fechas:</label>
             <div class="date-inputs">
@@ -59,12 +49,23 @@
         </div>
         
         <div class="filter-group">
+            <label for="filter-tipo"><i class="fas fa-tag"></i> Tipo de Pago:</label>
+            <select id="filter-tipo" class="filter-select">
+                <option value="todos">Todos los Tipos</option>
+                <option value="Anticipo">Anticipo</option>
+                <option value="Liquidacion">Liquidación</option>
+                <option value="Pago Completo">Pago Completo</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
             <label for="filter-metodo"><i class="fas fa-credit-card"></i> Método de Pago:</label>
             <select id="filter-metodo" class="filter-select">
                 <option value="todos">Todos los Métodos</option>
                 <option value="Efectivo">Efectivo</option>
-                <option value="Tarjeta">Tarjeta</option>
-                <option value="Transferencia">Transferencia</option>
+                <option value="Tarjeta de Credito">Tarjeta de Crédito</option>
+                <option value="Transferencia SPEI">Transferencia</option>
+                <option value="PayPal">PayPal</option>
             </select>
         </div>
         
@@ -75,8 +76,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Contenedor del historial -->
     <div class="pagos-container">
         <div class="pagos-header">
             <h3><i class="fas fa-history"></i> Registro de Transacciones</h3>
@@ -87,37 +86,14 @@
             <table class="data-table" id="tabla-pagos">
                 <thead>
                     <tr>
-                        <th class="sortable" data-sort="id">
-                            <i class="fas fa-hashtag"></i> ID
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="fecha">
-                            <i class="fas fa-calendar"></i> Fecha
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="cliente">
-                            <i class="fas fa-user"></i> Cliente
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="cita">
-                            <i class="fas fa-palette"></i> Cita/Descripción
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="tipo">
-                            <i class="fas fa-tag"></i> Tipo
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="metodo">
-                            <i class="fas fa-credit-card"></i> Método
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="sortable" data-sort="monto">
-                            <i class="fas fa-dollar-sign"></i> Monto
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th class="acciones">
-                            <i class="fas fa-cog"></i> Acciones
-                        </th>
+                        <th class="sortable" data-sort="id"><i class="fas fa-hashtag"></i> ID <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="fecha"><i class="fas fa-calendar"></i> Fecha <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="cliente"><i class="fas fa-user"></i> Cliente <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="cita"><i class="fas fa-palette"></i> Cita/Descripción <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="tipo"><i class="fas fa-tag"></i> Tipo <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="metodo"><i class="fas fa-credit-card"></i> Método <i class="fas fa-sort"></i></th>
+                        <th class="sortable" data-sort="monto"><i class="fas fa-dollar-sign"></i> Monto <i class="fas fa-sort"></i></th>
+                        <th class="acciones"><i class="fas fa-cog"></i> Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="pagos-tabla-body">

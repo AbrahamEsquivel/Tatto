@@ -1,14 +1,10 @@
 <?php
-// Conectamos a la base de datos
 include 'conexion.php';
-
-// AHORA RESPONDEMOS CON JSON
 header('Content-Type: application/json');
 
-// Verificamos que los datos lleguen por POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
-    // 1. Recoger todas las variables del formulario
+    // Recoger datos
     $nombre = trim($_POST['cliente_nombre']);
     $apellido = trim($_POST['cliente_apellido']);
     $email = trim($_POST['cliente_email']);
@@ -17,50 +13,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tatuaje_descripcion = trim($_POST['tatuaje_descripcion']);
     $id_estilo = (int)$_POST['id_estilo'];
     $id_parte_cuerpo = (int)$_POST['id_parte_cuerpo'];
-    $id_artista = (int)$_POST['id_artista']; // ⬇️ AÑADIDO ⬇️
+    $id_artista = (int)$_POST['id_artista'];
 
-    // 2. Preparar la llamada al Procedimiento Almacenado
-    // (Ahora tiene 9 signos de interrogación en lugar de 8)
-    $sql = "CALL sp_CrearCitaCliente(?, ?, ?, ?, ?, ?, ?, ?, ?)"; // ⬇️ MODIFICADO ⬇️
+    // --- LÓGICA DE SUBIDA DE IMAGEN ---
+    $nombre_imagen = null; // Por defecto null si no suben nada
     
+    if (isset($_FILES['imagen_referencia']) && $_FILES['imagen_referencia']['error'] == 0) {
+        $directorio = "../img/referencias/"; // Asegúrate de crear esta carpeta
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0777, true);
+        }
+        
+        $extension = pathinfo($_FILES['imagen_referencia']['name'], PATHINFO_EXTENSION);
+        // Generar nombre único para evitar colisiones
+        $nombre_archivo = uniqid("ref_") . "." . $extension;
+        $ruta_destino = $directorio . $nombre_archivo;
+        
+        // Mover el archivo
+        if (move_uploaded_file($_FILES['imagen_referencia']['tmp_name'], $ruta_destino)) {
+            $nombre_imagen = $nombre_archivo;
+        }
+    }
+    // ----------------------------------
+
+    // Llamar al SP (Ahora con 10 parámetros)
+    $sql = "CALL sp_CrearCitaCliente(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
     
     if ($stmt === false) {
-        // Error al preparar la consulta
-        echo json_encode(['success' => false, 'message' => 'Error del servidor (prepare).']);
+        echo json_encode(['success' => false, 'message' => 'Error prepare: ' . $conexion->error]);
         exit;
     }
 
-    // 3. Vincular los parámetros
-    // (Ahora es 'ssssssiii' en lugar de 'ssssssii')
-    $stmt->bind_param("ssssssiii", // ⬇️ MODIFICADO ⬇️
-        $nombre, 
-        $apellido, 
-        $email, 
-        $telefono, 
-        $fecha_hora, 
-        $tatuaje_descripcion, 
-        $id_estilo, 
-        $id_parte_cuerpo,
-        $id_artista // ⬇️ AÑADIDO ⬇️
+    // 'ssssssiiis' -> El último es string (la imagen)
+    $stmt->bind_param("ssssssiiis", 
+        $nombre, $apellido, $email, $telefono, 
+        $fecha_hora, $tatuaje_descripcion, $id_estilo, $id_parte_cuerpo, 
+        $id_artista, $nombre_imagen
     );
 
-    // 4. Ejecutar la llamada
     if ($stmt->execute()) {
-        // ¡ÉXITO!
         echo json_encode(['success' => true, 'message' => '¡Cita registrada con éxito!']);
-
     } else {
-        // ¡FALLO!
-        echo json_encode(['success' => false, 'message' => 'Error al guardar la cita en la BD.']);
+        echo json_encode(['success' => false, 'message' => 'Error BD: ' . $stmt->error]);
     }
 
     $stmt->close();
     $conexion->close();
 
 } else {
-    // Si no es POST
     echo json_encode(['success' => false, 'message' => 'Método no permitido.']);
-    exit;
 }
 ?>

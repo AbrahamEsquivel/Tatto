@@ -1,7 +1,5 @@
 <?php 
-    include 'admin_header.php'; // Incluye el menú y la seguridad
-    
-    // --- BLOQUE DE CARGA DE DATOS ---
+    include 'admin_header.php'; 
     include 'php/conexion.php';
     
     // 1. Cargar Artistas
@@ -22,11 +20,14 @@
     $r_partes = $conexion->query($sql_partes);
     if ($r_partes) while($f = $r_partes->fetch_assoc()) $partes_lista[] = $f;
 
-    // 4. Cargar Estados de Cita
-    $estados_lista = [];
-    $sql_estados = "SELECT id, nombre FROM estado_cita ORDER BY id";
-    $r_estados = $conexion->query($sql_estados);
-    if ($r_estados) while($f = $r_estados->fetch_assoc()) $estados_lista[] = $f;
+    // 4. BUSCAR EL ID DE "CONFIRMADA"
+    // (En lugar de cargar todos, solo buscamos el ID que necesitamos)
+    $id_confirmada = 2; // Valor por defecto (por si acaso)
+    $sql_estado = "SELECT id FROM estado_cita WHERE nombre = 'Confirmada' LIMIT 1";
+    $res_estado = $conexion->query($sql_estado);
+    if ($res_estado && $row = $res_estado->fetch_assoc()) {
+        $id_confirmada = $row['id'];
+    }
     
     $conexion->close();
 ?>
@@ -69,7 +70,7 @@
         color: #EF4444; /* Rojo */
         font-size: 0.85rem;
         margin-top: 5px;
-        display: none; /* Oculto por defecto */
+        display: none; 
     }
     .form-group.error input {
         border-color: #EF4444;
@@ -84,6 +85,19 @@
     }
     .form-container-dark .btn:hover { background: #2563EB; }
     .form-container-dark .btn:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
+    
+    /* Estilo para mostrar el estado fijo */
+    .estado-fijo {
+        padding: 10px;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid #22C55E;
+        color: #22C55E;
+        border-radius: 6px;
+        font-weight: bold;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+    }
 </style>
 
 <div class="form-container-dark">
@@ -165,16 +179,12 @@
         </div>
 
         <div class="form-group">
-            <label for="id_estado_cita">Estado Inicial:</label>
-            <select id="id_estado_cita" name="id_estado_cita" required>
-                <?php foreach ($estados_lista as $estado): ?>
-                    <option value="<?php echo $estado['id']; ?>" <?php if($estado['nombre'] == 'Confirmada') echo 'selected'; ?>>
-                        <?php echo htmlspecialchars($estado['nombre']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <label>Estado Inicial:</label>
+            <div class="estado-fijo">
+                <i class="fas fa-check-circle"></i> Confirmada
+            </div>
+            <input type="hidden" name="id_estado_cita" value="<?php echo $id_confirmada; ?>">
         </div>
-
         <button type="submit" id="btn-registrar" class="btn">Registrar Cita</button>
     </form>
 </div>
