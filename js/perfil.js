@@ -29,7 +29,7 @@ async function cargarDatosPerfil(id) {
 
         // --- ¡ÉXITO! Tenemos los datos ---
         // Enviamos cada parte del JSON a su función de "pintado"
-        pintarKPIs(data.kpis);
+        pintarKPIs(data.kpis, data.es_artista);
         pintarTablaCitas(data.citas);
         pintarTablaPagos(data.pagos);
 
@@ -46,8 +46,18 @@ async function cargarDatosPerfil(id) {
 /**
  * "Pinta" las tarjetas de estadísticas (KPIs)
  */
-function pintarKPIs(kpis) {
+function pintarKPIs(kpis, es_artista) { // <--- Recibimos el nuevo dato
     document.getElementById('stat-citas-totales').textContent = kpis.total_citas;
+    
+    const labelGasto = document.querySelector('#stat-gasto-total').previousElementSibling; // El <h3>
+    
+    if (es_artista) {
+        labelGasto.textContent = "Ingresos Generados";
+        document.querySelector('.perfil-card h2').innerHTML += ' <span style="font-size:0.6em; background:#3B82F6; color:white; padding:3px 8px; border-radius:4px; vertical-align:middle;">ARTISTA</span>';
+    } else {
+        labelGasto.textContent = "Gasto Total";
+    }
+    
     document.getElementById('stat-gasto-total').textContent = formatCurrency(kpis.gasto_total);
 }
 
@@ -88,17 +98,21 @@ function pintarTablaPagos(pagos) {
     const tbody = document.getElementById('tabla-pagos-persona');
     tbody.innerHTML = ''; // Limpiamos el "Cargando..."
 
+    // Actualizamos el colspan a 5 porque ahora son 5 columnas
     if (pagos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Esta persona no tiene pagos registrados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Esta persona no tiene pagos registrados.</td></tr>';
         return;
     }
 
     pagos.forEach(pago => {
         const filaHTML = `
             <tr>
-                <td>${pago.id_pago}</td>
-                <td>${pago.fecha_pago}</td>
+                <td>#${pago.id_pago}</td>
+                <td>${formatearFechaSimple(pago.fecha_pago)}</td>
                 <td>${escapeHtml(pago.tipo_pago)}</td>
+                
+                <td>${escapeHtml(pago.metodo_pago)}</td>
+                
                 <td class="monto-pago">${formatCurrency(pago.monto)}</td>
             </tr>
         `;

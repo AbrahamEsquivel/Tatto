@@ -120,17 +120,27 @@ function renderTabla(pagos) {
             html += `
                 <tr>
                     <td>#${pago.id_pago}</td>
+                    
                     <td>${formatearFechaSimple(pago.fecha_pago)}</td>
+                    
                     <td>${escapeHtml(pago.cliente_nombre)} ${escapeHtml(pago.cliente_apellido)}</td>
+                    
                     <td>(ID: ${pago.id_cita}) ${escapeHtml(pago.tatuaje_descripcion.substring(0, 30))}...</td>
+                    
                     <td><span class="tipo-badge ${tipoClase}">${pago.tipo_pago}</span></td>
+                    
                     <td><span class="metodo-badge ${metodoClase}">${pago.metodo_pago}</span></td>
+                    
                     <td class="monto-pago">${formatCurrency(pago.monto)}</td>
+                    
                     <td class="acciones-cell">
-                        <a href="pago-form.php?id_pago=${pago.id_pago}" class="btn-editar-pago"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="pago-form.php?id_pago=${pago.id_pago}" class="btn-editar-pago">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
                     </td>
                 </tr>
             `;
+            console.log('hola mundo');
         });
         tbody.innerHTML = html;
     }
