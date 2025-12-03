@@ -65,11 +65,6 @@
             </a>
         </nav>
 
-       
-
-            
-            
-        </nav>
         
         <div class="footer-link">
             <a href="php/logout.php">
@@ -80,4 +75,5 @@
         
     </aside>
     
-    <main class="admin-content"></main>
+    <main class="admin-content">
+    </main>

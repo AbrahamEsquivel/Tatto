@@ -2,7 +2,7 @@
     include 'admin_header.php';
 ?>
 <title>Historial de Pagos - Admin</title>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="css/historial-pagos.css">
 
 <div class="admin-content">

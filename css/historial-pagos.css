@@ -464,3 +464,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         font-size: 0.9rem;
     }
 }
+
+/* Estilo para el botón de Eliminar (Basura) */
+.btn-eliminar-pago {
+    background: rgba(239, 68, 68, 0.1); /* Rojo suave y transparente */
+    color: #EF4444; /* Rojo vibrante para el icono */
+    border: 1px solid #EF4444;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efecto Hover (Al pasar el mouse) */
+.btn-eliminar-pago:hover {
+    background: #EF4444; /* Se vuelve rojo sólido */
+    color: #fff; /* El icono se vuelve blanco */
+    transform: translateY(-2px); /* Pequeño saltito hacia arriba */
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); /* Resplandor rojo */
+}
+
+/* Efecto Click */
+.btn-eliminar-pago:active {
+    transform: translateY(0);
+}

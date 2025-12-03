@@ -1,4 +1,4 @@
-// js/historial-pagos.js (Versión 4.0 - Con Filtro de TIPO)
+// js/historial-pagos.js (Versión Final - Con Eliminar)
 
 let allPagos = []; 
 let ordenActual = { campo: 'fecha', asc: false };
@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarHistorialPagos();
     configurarFiltros();
     configurarOrdenamiento();
+    configurarAcciones(); // <--- NUEVO
 });
 
 function cargarHistorialPagos() {
@@ -31,10 +32,7 @@ function configurarFiltros() {
     document.getElementById('filter-fecha-desde').addEventListener('change', aplicarFiltrosYOrdenamiento);
     document.getElementById('filter-fecha-hasta').addEventListener('change', aplicarFiltrosYOrdenamiento);
     document.getElementById('filter-metodo').addEventListener('change', aplicarFiltrosYOrdenamiento);
-    
-    // ⬇️ NUEVO LISTENER ⬇️
     document.getElementById('filter-tipo').addEventListener('change', aplicarFiltrosYOrdenamiento);
-    
     document.getElementById('search-pagos').addEventListener('input', aplicarFiltrosYOrdenamiento);
 }
 
@@ -59,7 +57,6 @@ function aplicarFiltrosYOrdenamiento() {
     const fechaDesde = document.getElementById('filter-fecha-desde').value;
     const fechaHasta = document.getElementById('filter-fecha-hasta').value;
     const metodoFiltro = document.getElementById('filter-metodo').value;
-    // ⬇️ NUEVA VARIABLE ⬇️
     const tipoFiltro = document.getElementById('filter-tipo').value;
     const busqueda = document.getElementById('search-pagos').value.toLowerCase();
 
@@ -67,8 +64,6 @@ function aplicarFiltrosYOrdenamiento() {
         if (fechaDesde && pago.fecha_pago < fechaDesde) return false;
         if (fechaHasta && pago.fecha_pago > fechaHasta) return false;
         if (metodoFiltro !== 'todos' && pago.metodo_pago !== metodoFiltro) return false;
-        
-        // ⬇️ NUEVA LÓGICA DE FILTRO ⬇️
         if (tipoFiltro !== 'todos' && pago.tipo_pago !== tipoFiltro) return false;
 
         if (busqueda) {
@@ -82,7 +77,6 @@ function aplicarFiltrosYOrdenamiento() {
 
     actualizarKPIs(pagosFiltrados);
 
-    // Ordenamiento (Igual que antes)
     pagosFiltrados.sort((a, b) => {
         let valorA = a[ordenActual.campo] || '';
         let valorB = b[ordenActual.campo] || '';
@@ -120,33 +114,79 @@ function renderTabla(pagos) {
             html += `
                 <tr>
                     <td>#${pago.id_pago}</td>
-                    
                     <td>${formatearFechaSimple(pago.fecha_pago)}</td>
-                    
                     <td>${escapeHtml(pago.cliente_nombre)} ${escapeHtml(pago.cliente_apellido)}</td>
-                    
                     <td>(ID: ${pago.id_cita}) ${escapeHtml(pago.tatuaje_descripcion.substring(0, 30))}...</td>
-                    
                     <td><span class="tipo-badge ${tipoClase}">${pago.tipo_pago}</span></td>
-                    
                     <td><span class="metodo-badge ${metodoClase}">${pago.metodo_pago}</span></td>
-                    
                     <td class="monto-pago">${formatCurrency(pago.monto)}</td>
-                    
                     <td class="acciones-cell">
-                        <a href="pago-form.php?id_pago=${pago.id_pago}" class="btn-editar-pago">
-                            <i class="fas fa-edit"></i> Editar
+                        <a href="pago-form.php?id_pago=${pago.id_pago}" class="btn-editar-pago" title="Ver/Editar Fecha">
+                            <i class="fas fa-edit"></i>
                         </a>
+                        <button class="btn-eliminar-pago" data-id="${pago.id_pago}" title="Eliminar Pago">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `;
-            console.log('hola mundo');
         });
         tbody.innerHTML = html;
     }
     document.getElementById('pagos-count').textContent = `${pagos.length} registros encontrados`;
 }
 
+// --- LÓGICA DE ELIMINAR ---
+function configurarAcciones() {
+    document.getElementById('pagos-tabla-body').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-eliminar-pago');
+        if (btn) {
+            const idPago = btn.dataset.id;
+            Swal.fire({
+                title: '¿Eliminar Pago?',
+                text: "Esta acción restará el monto del total abonado de la cita. ¿Estás seguro?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                background: '#1a1a1a', color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarPago(idPago);
+                }
+            });
+        }
+    });
+}
+
+function eliminarPago(id) {
+    const formData = new FormData();
+    formData.append('id_pago', id);
+
+    fetch('php/eliminarPago.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Eliminado', text: 'El pago ha sido eliminado y el saldo actualizado.', icon: 'success',
+                background: '#1a1a1a', color: '#fff'
+            });
+            cargarHistorialPagos(); // Recarga la tabla
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    });
+}
+
+// --- HELPERS ---
+// (Aquí añade tus funciones auxiliares normales: actualizarKPIs, mapearClase..., formatCurrency, etc.)
+// Copia y pega las funciones auxiliares del código anterior si se borraron, 
+// son las mismas (actualizarKPIs, mapearClaseTipo, mapearClaseMetodo, formatearFechaSimple, formatCurrency, escapeHtml).
+// Te pongo las básicas aquí para que no falle:
 function actualizarKPIs(pagos) {
     let totalIngresos = 0;
     let totalPagos = pagos.length;
@@ -154,38 +194,12 @@ function actualizarKPIs(pagos) {
         totalIngresos = pagos.reduce((sum, pago) => sum + parseFloat(pago.monto), 0);
     }
     let promedioPago = totalPagos > 0 ? totalIngresos / totalPagos : 0;
-
     document.getElementById('total-ingresos').textContent = formatCurrency(totalIngresos);
     document.getElementById('total-pagos').textContent = totalPagos;
     document.getElementById('promedio-pago').textContent = formatCurrency(promedioPago);
 }
-
-// --- HELPERS ---
-function mapearClaseTipo(tipo) {
-    if(tipo === 'Anticipo') return 'tipo-adelanto';
-    if(tipo === 'Pago Completo') return 'tipo-completo';
-    if(tipo === 'Liquidacion') return 'tipo-parcial';
-    return '';
-}
-function mapearClaseMetodo(metodo) {
-    if(metodo === 'Efectivo') return 'metodo-efectivo';
-    if(metodo === 'Tarjeta de Credito') return 'metodo-tarjeta';
-    if(metodo === 'Transferencia SPEI') return 'metodo-transferencia';
-    if(metodo === 'PayPal') return 'metodo-tarjeta'; // Reusamos estilo
-    return '';
-}
-function formatearFechaSimple(fecha) {
-    if (!fecha) return 'N/A';
-    const date = new Date(fecha);
-    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    return new Date(date.getTime() + userTimezoneOffset).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-function formatCurrency(value) {
-    return '$' + (parseFloat(value) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-function escapeHtml(text) {
-    if (text == null) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+function mapearClaseTipo(t) { if(t==='Anticipo')return 'tipo-adelanto'; if(t==='Pago Completo')return 'tipo-completo'; if(t==='Liquidacion')return 'tipo-parcial'; return ''; }
+function mapearClaseMetodo(m) { if(m==='Efectivo')return 'metodo-efectivo'; if(m==='Tarjeta de Credito')return 'metodo-tarjeta'; if(m==='Transferencia SPEI')return 'metodo-transferencia'; return ''; }
+function formatearFechaSimple(f) { if(!f)return 'N/A'; const d=new Date(f); const offset=d.getTimezoneOffset()*60000; return new Date(d.getTime()+offset).toLocaleDateString('es-ES',{year:'numeric',month:'short',day:'numeric'}); }
+function formatCurrency(v) { return '$'+(parseFloat(v)||0).toLocaleString('es-MX',{minimumFractionDigits:2}); }
+function escapeHtml(t) { if(t==null)return ''; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }

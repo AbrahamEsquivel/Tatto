@@ -11,6 +11,9 @@
     $id_metodo_pago_sel = null;
     $titulo_pagina = "Registrar Nuevo Pago";
     $cita = null;
+    $is_readonly = ''; 
+    $is_disabled = ''; 
+    $modo_edicion_pago = false;
     
     // Variables para el desglose
     $precio_total = 0;
@@ -41,9 +44,14 @@
         
     } 
     // 3. BUSCAR DATOS DEL PAGO (MODO EDITAR)
-    else if (isset($_GET['id_pago'])) {
+   else if (isset($_GET['id_pago'])) {
         $id_pago = (int)$_GET['id_pago'];
         $titulo_pagina = "Editar Pago #$id_pago";
+        $modo_edicion_pago = true;
+        
+        // CONFIGURACIÓN DE BLOQUEO:
+        $is_readonly = 'readonly';   // Monto: BLOQUEADO
+        $is_disabled = 'disabled';
 
         $stmt_pago = $conexion->prepare("SELECT * FROM pago WHERE id = ?");
         $stmt_pago->bind_param("i", $id_pago);
@@ -174,8 +182,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
                 <div class="form-group">
                     <label for="monto">Monto a Pagar (MXN):</label>
                     <input type="number" id="monto" name="monto" step="0.01" min="0" 
-                           value="<?php echo $monto; ?>" 
-                           required placeholder="0.00">
+                           value="<?php echo $monto; ?>" required <?php echo $is_readonly; ?>>
                     <small style="color: #666;">Se ha sugerido el monto restante automáticamente.</small>
                 </div>
 
@@ -189,7 +196,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 
                 <div class="form-group">
                     <label for="id_tipo_pago">Tipo de Pago:</label>
-                    <select id="id_tipo_pago" name="id_tipo_pago" required>
+                    <select id="id_tipo_pago" name="id_tipo_pago" required <?php echo $is_disabled; ?>>
                         <option value="">-- Selecciona un tipo --</option>
                         <?php while($row = $tipos_pago->fetch_assoc()): ?>
                             <option value="<?php echo $row['id']; ?>" <?php if($row['id'] == $id_tipo_pago_sel) echo 'selected'; ?>>
@@ -211,6 +218,10 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
                     </select>
                 </div>
             </div>
+            
+            <?php if ($modo_edicion_pago): ?>
+                <input type="hidden" name="id_tipo_pago" value="<?php echo $id_tipo_pago_sel; ?>">
+            <?php endif; ?>
 
             <button type="submit" class="btn">
                 <i class="fas fa-save"></i> Guardar Pago

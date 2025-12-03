@@ -237,8 +237,9 @@ function generarTarjetaCita(cita) {
                 <div class="estado-cita ${estadoClass}">${estadoText}</div>
                 
                 <div class="card-actions">
-                    <a href="edit-cita.php?id=${cita.id_cita}" class="btn-action btn-editar ${isFinalizada ? 'btn-disabled' : ''}">
-                       <i class="fas fa-edit"></i> Editar
+                    <a href="edit-cita.php?id=${cita.id_cita}" 
+                        class="btn-action btn-editar ${isCancelada ? 'btn-disabled' : ''}">
+                            <i class="fas fa-edit"></i> Editar
                     </a>
                     ${!isFinalizada ? `
                     <button class="btn-action btn-completar" data-id="${cita.id_cita}">

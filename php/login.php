@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 p.email
             FROM ARTISTA AS a
             JOIN PERSONA AS p ON a.id_persona = p.id
-            WHERE p.email = ?";
+            WHERE p.email = ? AND a.active = 1";
 
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("s", $email);
